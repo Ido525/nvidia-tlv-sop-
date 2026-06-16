@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency SOP | NVIDIA Tel Aviv</title>
+<style>
+  :root { color-scheme: light; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --nvidia-green: #76B900;
+    --nvidia-dark: #1a1a1a;
+    --red-alert: #CC0000;
+    --orange-warn: #E65C00;
+    --blue-info: #1F3564;
+    --light-bg: #f5f7fa;
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    --card-radius: 10px;
+  }
+  body { font-family: Arial, sans-serif; background: var(--light-bg); color: var(--nvidia-dark); direction: ltr; }
+
+  .top-bar {
+    background: var(--nvidia-dark); color: white;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4); flex-wrap: wrap; gap: 8px;
+  }
+  .top-bar .logo { font-size: 20px; font-weight: 900; color: var(--nvidia-green); }
+  .top-bar .doc-title { font-size: 13px; color: #ccc; font-weight: 600; }
+  .top-bar .badge {
+    background: var(--red-alert); color: white; padding: 4px 12px;
+    border-radius: 20px; font-size: 12px; font-weight: 700;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+
+  .main { max-width: 1000px; margin: 0 auto; padding: 16px 12px 40px; }
+
+  .hero-alert {
+    background: var(--red-alert); color: white;
+    border-radius: var(--card-radius); padding: 16px 20px;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 14px;
+  }
+  .hero-alert .icon-big { font-size: 32px; flex-shrink: 0; }
+  .hero-alert .assembly { font-size: 20px; font-weight: 800; margin-top: 3px; }
+  .hero-alert .never {
+    background: rgba(255,255,255,0.2); border-radius: 6px;
+    padding: 5px 10px; font-size: 14px; margin-top: 5px;
+    display: inline-block; font-weight: 700;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card { background: white; border-radius: var(--card-radius); box-shadow: var(--card-shadow); overflow: hidden; }
+  .card-header { padding: 10px 14px; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 12px 14px; }
+
+  .bg-red { background: var(--red-alert); color: white; }
+  .bg-blue { background: var(--blue-info); color: white; }
+  .bg-dark { background: #2d2d2d; color: white; }
+
+  .contacts-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .contacts-table tr:nth-child(even) { background: #f9f9f9; }
+  .contacts-table td { padding: 7px 10px; border-bottom: 1px solid #eee; }
+  .contacts-table .phone { font-weight: 800; color: var(--red-alert); font-size: 14px; white-space: nowrap; }
+  .contacts-table .role { font-weight: 600; color: var(--blue-info); }
+
+  .building-box { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .binfo { background: #f5f7fa; border-radius: 6px; padding: 8px 10px; border-left: 3px solid var(--blue-info); }
+  .binfo .binfo-label { font-size: 10px; color: #888; font-weight: 700; text-transform: uppercase; }
+  .binfo .binfo-val { font-size: 13px; font-weight: 700; color: var(--nvidia-dark); margin-top: 2px; }
+
+  .stairwells { display: flex; gap: 8px; margin-top: 10px; }
+  .stairwell { flex: 1; border-radius: 8px; padding: 10px; text-align: center; border: 2px solid; }
+  .stairwell.a1 { border-color: var(--red-alert); background: #fff0f0; }
+  .stairwell.a2 { border-color: var(--blue-info); background: #f0f5ff; }
+  .stairwell .sw-id { font-size: 24px; font-weight: 900; }
+  .stairwell.a1 .sw-id { color: var(--red-alert); }
+  .stairwell.a2 .sw-id { color: var(--blue-info); }
+  .stairwell .sw-loc { font-size: 12px; font-weight: 700; margin-top: 3px; }
+  .stairwell .sw-note { font-size: 11px; color: #666; margin-top: 2px; }
+
+  .never-strip {
+    background: var(--red-alert); color: white; border-radius: 6px;
+    padding: 8px 12px; display: flex; align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 800; margin-top: 10px;
+  }
+
+  .section-title {
+    font-size: 16px; font-weight: 800; color: var(--blue-info);
+    margin: 18px 0 10px; display: flex; align-items: center; gap: 8px;
+    padding-bottom: 5px; border-bottom: 3px solid var(--nvidia-green);
+  }
+
+  .evac-flow { display: flex; flex-direction: column; gap: 3px; }
+  .evac-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 9px 12px; border-radius: 7px; font-size: 13px; font-weight: 600;
+  }
+  .evac-step .e-num {
+    background: white; color: var(--red-alert); border-radius: 50%;
+    width: 26px; height: 26px; min-width: 26px;
+    font-size: 12px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .evac-step .e-sub { font-size: 12px; font-weight: 400; margin-top: 2px; color: rgba(0,0,0,0.6); }
+  .es1 { background: #fff0f0; border-left: 4px solid var(--red-alert); }
+  .es2 { background: #fff5e6; border-left: 4px solid var(--orange-warn); }
+  .es3 { background: #f0f5ff; border-left: 4px solid var(--blue-info); }
+  .es4 { background: #f0fadf; border-left: 4px solid var(--nvidia-green); }
+  .es5 { background: #fff5e6; border-left: 4px solid var(--orange-warn); }
+  .es6 { background: #f0f5ff; border-left: 4px solid var(--blue-info); }
+  .evac-arrow { text-align: center; color: #bbb; font-size: 14px; }
+
+  .dis-note {
+    background: #fff8e1; border-left: 4px solid #FFC107;
+    padding: 9px 12px; border-radius: 6px; font-size: 13px; margin-top: 10px; line-height: 1.5;
+  }
+
+  .scenarios { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .scenario-card {
+    border-radius: 8px; padding: 10px 12px;
+    flex: 1; min-width: 120px; cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    text-align: center; user-select: none; border: 2px solid transparent;
+  }
+  .scenario-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .scenario-card.active { box-shadow: 0 0 0 3px var(--nvidia-green); }
+  .scenario-card .s-icon { font-size: 26px; }
+  .scenario-card .s-title { font-size: 13px; font-weight: 800; margin-top: 3px; }
+  .scenario-card .s-action { font-size: 11px; margin-top: 2px; opacity: 0.8; }
+
+  .scenario-detail {
+    display: none; background: white; border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow); padding: 16px 18px;
+    margin-bottom: 14px; border-top: 4px solid var(--red-alert);
+  }
+  .scenario-detail.active { display: block; }
+  .scenario-detail h3 { font-size: 15px; color: var(--blue-info); margin-bottom: 10px; font-weight: 800; }
+
+  .steps { list-style: none; }
+  .steps li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 7px 0; border-bottom: 1px solid #f0f0f0;
+    font-size: 13px; line-height: 1.5;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .sn {
+    border-radius: 50%; width: 22px; height: 22px; min-width: 22px;
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    color: white; margin-top: 1px;
+  }
+  .sn-red { background: var(--red-alert); }
+  .sn-orange { background: var(--orange-warn); }
+  .sn-blue { background: var(--blue-info); }
+  .sn-green { background: var(--nvidia-green); }
+  .sn-purple { background: #6B21A8; }
+
+  .roles-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .roles-table th { background: var(--blue-info); color: white; padding: 8px 10px; text-align: left; font-weight: 700; }
+  .roles-table td { padding: 7px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+  .roles-table tr:nth-child(even) td { background: #f9f9f9; }
+  .roles-table .rn { font-weight: 700; color: var(--blue-info); }
+
+  .aed-box {
+    background: #fff0f0; border: 2px solid var(--red-alert);
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px; margin-top: 10px;
+  }
+  .aed-icon { font-size: 32px; }
+  .aed-title { font-size: 14px; font-weight: 800; color: var(--red-alert); }
+  .aed-loc { font-size: 12px; color: #444; margin-top: 2px; }
+
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .grid-3 { grid-template-columns: 1fr; } }
+
+  .footer {
+    text-align: center; color: #999; font-size: 11px;
+    padding: 16px; border-top: 1px solid #e5e5e5; margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">NVIDIA</div>
+  <div class="doc-title">Emergency SOP | Rubinstein Twins Tower, Tel Aviv</div>
+  <div class="badge">🔴 OPERATIONAL USE</div>
+</div>
+
+<div class="main">
+
+  <div class="hero-alert">
+    <div class="icon-big">🚨</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;">Assembly Point:</div>
+      <div class="assembly">North Sidewalk – Yitzhak Sadeh St.</div>
+      <div class="never">⛔ DO NOT USE ELEVATORS – Stairs only</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+
+    <div class="card">
+      <div class="card-header bg-red"><span>📞</span> Emergency Contacts</div>
+      <div class="card-body" style="padding:0">
+        <table class="contacts-table">
+          <tr><td class="role">Fire Department</td><td class="phone">102</td></tr>
+          <tr><td class="role">Ambulance (MDA)</td><td class="phone">101</td></tr>
+          <tr><td class="role">Police</td><td class="phone">100</td></tr>
+          <tr><td class="role">RSOC Israel 24/7</td><td class="phone">074-723-6000/3/4</td></tr>
+          <tr><td class="role">CBRE – Mickey</td><td class="phone">050-7699000</td></tr>
+          <tr><td class="role">Building Guard</td><td class="phone">050-4991565</td></tr>
+          <tr><td class="role">Security Manager – Ramil</td><td class="phone">053-5556104</td></tr>
+          <tr><td class="role">Building Manager – Ran</td><td class="phone">052-8556605</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header bg-blue"><span>🏢</span> Building Information</div>
+      <div class="card-body">
+        <div class="building-box">
+          <div class="binfo"><div class="binfo-label">Address</div><div class="binfo-val">4 Yitzhak Sadeh, Tel Aviv</div></div>
+          <div class="binfo"><div class="binfo-label">NVIDIA Floors</div><div class="binfo-val">1–11, 20–24, 30–31</div></div>
+          <div class="binfo"><div class="binfo-label">NVIDIA Lobby</div><div class="binfo-val">Floor 4</div></div>
+          <div class="binfo"><div class="binfo-label">Parking</div><div class="binfo-val">B1–B5</div></div>
+          <div class="binfo"><div class="binfo-label">Main Fire Panel</div><div class="binfo-val">Ground Floor – Lobby</div></div>
+          <div class="binfo"><div class="binfo-label">Generators</div><div class="binfo-val">B1 East Wing</div></div>
+        </div>
+        <div class="stairwells">
+          <div class="stairwell a1">
+            <div class="sw-id">A1</div>
+            <div class="sw-loc">South Wing</div>
+            <div class="sw-note">Exits to ground floor</div>
+          </div>
+          <div class="stairwell a2">
+            <div class="sw-id">A2</div>
+            <div class="sw-loc">North Wing</div>
+            <div class="sw-note">Exits to ground floor</div>
+          </div>
+        </div>
+        <div class="never-strip"><span>🚫</span> No elevators! Stairs only!</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title"><span>🏃</span> Evacuation Procedure – Step by Step</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body">
+      <div class="evac-flow">
+
+        <div class="evac-step es1">
+          <div class="e-num">1</div>
+          <div>
+            <div><strong>Alarm Activation / PA Announcement</strong></div>
+            <div class="e-sub">Alarm system activated – indication received – automatic PA broadcast</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es2">
+          <div class="e-num">2</div>
+          <div>
+            <div><strong>Security Officer notifies RSOC & Building Security</strong></div>
+            <div class="e-sub">RSOC: 074-723-6000/3/4 | Building Guard: 050-4991565</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es3">
+          <div class="e-num">3</div>
+          <div>
+            <div><strong>ERT – Floor sweeps & employee evacuation</strong></div>
+            <div class="e-sub">Stairs only | A1 = South Wing | A2 = North Wing</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es4">
+          <div class="e-num">4</div>
+          <div>
+            <div><strong>Assemble at Assembly Point</strong></div>
+            <div class="e-sub">North sidewalk – Yitzhak Sadeh St. | Do not block fire truck access</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es5">
+          <div class="e-num">5</div>
+          <div>
+            <div><strong>Headcount</strong></div>
+            <div class="e-sub">Team manager conducts count → reports to Security Officer any missing personnel</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es6">
+          <div class="e-num">6</div>
+          <div>
+            <div><strong>Return to building – authorized personnel only</strong></div>
+            <div class="e-sub">Clearance from rescue forces and Incident Commander only → controlled re-entry</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dis-note">
+        <strong>♿ Employees with disabilities:</strong> ERT member ensures assistance from additional employees on the stairs. If not possible – direct to nearest shelter room (Area of Refuge) and update RSOC and rescue forces with floor and location.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><span>⚡</span> Incident Types – Tap for details</div>
+  <div class="scenarios">
+    <div class="scenario-card" style="background:#fff0f0;border-color:var(--red-alert)" onclick="showScenario('fire',this)">
+      <div class="s-icon">🔥</div>
+      <div class="s-title" style="color:var(--red-alert)">Fire / Smoke</div>
+      <div class="s-action" style="color:#666">Extinguish + Evacuate</div>
+    </div>
+    <div class="scenario-card" style="background:#fff5e6;border-color:var(--orange-warn)" onclick="showScenario('rockets',this)">
+      <div class="s-icon">🚀</div>
+      <div class="s-title" style="color:var(--orange-warn)">Rocket / Missile Alert</div>
+      <div class="s-action" style="color:#666">Enter shelter</div>
+    </div>
+    <div class="scenario-card" style="background:#fff0f0;border-color:#8B0000" onclick="showScenario('security',this)">
+      <div class="s-icon">🔫</div>
+      <div class="s-title" style="color:#8B0000">Security Incident</div>
+      <div class="s-action" style="color:#666">Run-Hide-Fight</div>
+    </div>
+    <div class="scenario-card" style="background:#f0f5ff;border-color:var(--blue-info)" onclick="showScenario('quake',this)">
+      <div class="s-icon">🌍</div>
+      <div class="s-title" style="color:var(--blue-info)">Earthquake</div>
+      <div class="s-action" style="color:#666">Shelter + Evacuate</div>
+    </div>
+    <div class="scenario-card" style="background:#f5f0ff;border-color:#6B21A8" onclick="showScenario('medical',this)">
+      <div class="s-icon">🚑</div>
+      <div class="s-title" style="color:#6B21A8">Medical Emergency</div>
+      <div class="s-action" style="color:#666">101 + AED</div>
+    </div>
+    <div class="scenario-card" style="background:#f0fff5;border-color:#166534" onclick="showScenario('hazmat',this)">
+      <div class="s-icon">☢️</div>
+      <div class="s-title" style="color:#166534">Hazardous Materials</div>
+      <div class="s-action" style="color:#666">Isolate + 102</div>
+    </div>
+  </div>
+
+  <div id="fire" class="scenario-detail" style="border-top-color:var(--red-alert)">
+    <h3>🔥 Fire / Smoke</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div>Upon discovering fire – attempt to extinguish with the nearest fire extinguisher. If unable to control – step back and evacuate people around you.</div></li>
+      <li><div class="sn sn-red">2</div><div>Activate manual fire alarm button | Alert fire department: <strong>102</strong></div></li>
+      <li><div class="sn sn-red">3</div><div>Security Officer notifies RSOC: <strong>074-723-6000/3/4</strong></div></li>
+      <li><div class="sn sn-red">4</div><div>Evacuate employees via stairs – <strong>no elevators</strong></div></li>
+      <li><div class="sn sn-red">5</div><div>ERT sweeps assigned floors, reports casualties/trapped persons to Security Officer</div></li>
+      <li><div class="sn sn-red">6</div><div>Assemble at assembly point | Conduct headcount | Report missing personnel</div></li>
+      <li><div class="sn sn-red">7</div><div>Prevent employees from re-entering – until clearance from rescue forces or authorized party</div></li>
+    </ul>
+  </div>
+
+  <div id="rockets" class="scenario-detail" style="border-top-color:var(--orange-warn)">
+    <h3>🚀 Rocket / Missile Alert</h3>
+    <ul class="steps">
+      <li><div class="sn sn-orange">1</div><div>Upon receiving alert via Home Front Command app / hearing building siren – <strong>enter the nearest shelter (Mamad) immediately</strong></div></li>
+      <li><div class="sn sn-orange">2</div><div>If unable to reach shelter in time – go to the nearest stairwell and remain there</div></li>
+      <li><div class="sn sn-orange">3</div><div>If outside the building – <strong>lie flat on the ground and cover your head with both hands</strong></div></li>
+      <li><div class="sn sn-orange">4</div><div>Remain in shelter until receiving an <strong>all-clear announcement from Home Front Command</strong></div></li>
+    </ul>
+  </div>
+
+  <div id="security" class="scenario-detail" style="border-top-color:#8B0000">
+    <h3>🔫 Security Incident / Violence – Run · Hide · Fight</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div><strong style="color:var(--red-alert)">RUN</strong> – Evacuate the area immediately, leave belongings behind</div></li>
+      <li><div class="sn sn-red">2</div><div><strong style="color:var(--orange-warn)">HIDE</strong> – Lock/barricade door, turn off lights, stay low. If possible – enter the nearest shelter room.</div></li>
+      <li><div class="sn sn-red">3</div><div><strong style="color:#8B0000">FIGHT</strong> – As a last resort only, use any available means</div></li>
+      <li><div class="sn sn-red">4</div><div>Security Officer reports to Police <strong>100</strong> and RSOC <strong>074-723-6000</strong>. Initiate lockdown.</div></li>
+      <li><div class="sn sn-red">5</div><div>Report to Police: <strong>100</strong></div></li>
+      <li><div class="sn sn-red">6</div><div>Do not attempt individual rescue – await security forces</div></li>
+    </ul>
+  </div>
+
+  <div id="quake" class="scenario-detail" style="border-top-color:var(--blue-info)">
+    <h3>🌍 Earthquake</h3>
+    <ul class="steps">
+      <li><div class="sn sn-blue">1</div><div><strong>Floors 1–2:</strong> Evacuate as quickly as possible via stairs out of the building</div></li>
+      <li><div class="sn sn-blue">2</div><div>Direct employees into the nearest shelter room – <strong>leave the door open</strong></div></li>
+      <li><div class="sn sn-blue">3</div><div>Update RSOC: <strong>074-723-6000/3/4</strong></div></li>
+      <li><div class="sn sn-blue">4</div><div>Once shaking stops – if possible, evacuate employees via stairs out of the building</div></li>
+      <li><div class="sn sn-blue">5</div><div>Watch for aftershocks | Outdoors – keep people away from trees and hanging power lines</div></li>
+      <li><div class="sn sn-blue">6</div><div>Do not authorize return to building without clearance from rescue forces or authorized party</div></li>
+      <li><div class="sn sn-blue">7</div><div><strong>Do not use elevators</strong></div></li>
+    </ul>
+  </div>
+
+  <div id="medical" class="scenario-detail" style="border-top-color:#6B21A8">
+    <h3>🚑 Medical Emergency</h3>
+    <ul class="steps">
+      <li><div class="sn sn-purple">1</div><div>Call ambulance (MDA): <strong>101</strong></div></li>
+      <li><div class="sn sn-purple">2</div><div>AED – Main lobby near OM desk – <strong>retrieve immediately</strong></div></li>
+      <li><div class="sn sn-purple">3</div><div>Secure the area – prevent unnecessary people from entering</div></li>
+      <li><div class="sn sn-purple">4</div><div>Security Officer notifies RSOC and ensures clear access for rescue teams</div></li>
+      <li><div class="sn sn-purple">5</div><div>Do not move the casualty without proper training</div></li>
+      <li><div class="sn sn-purple">6</div><div>Station someone at building entrance to direct MDA team</div></li>
+    </ul>
+    <div class="aed-box">
+      <div class="aed-icon">❤️‍🩹</div>
+      <div><div class="aed-title">AED – Defibrillator</div><div class="aed-loc">NVIDIA Main Lobby – near OM desk</div></div>
+    </div>
+  </div>
+
+  <div id="hazmat" class="scenario-detail" style="border-top-color:#166534">
+    <h3>☢️ Hazardous Materials</h3>
+    <ul class="steps">
+      <li><div class="sn sn-green">1</div><div>Isolate the area immediately – keep employees at least 50 meters away</div></li>
+      <li><div class="sn sn-green">2</div><div>Do not touch or smell – identify from a distance if possible</div></li>
+      <li><div class="sn sn-green">3</div><div>Fire Department: <strong>102</strong> with substance details if known</div></li>
+      <li><div class="sn sn-green">4</div><div>Report to RSOC: <strong>074-723-6000/3/4</strong></div></li>
+      <li><div class="sn sn-green">5</div><div>Contact CBRE representative and EHS</div></li>
+      <li><div class="sn sn-green">6</div><div>Evacuate as needed per management decision</div></li>
+    </ul>
+  </div>
+
+  <div class="section-title"><span>👥</span> Emergency Roles</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body" style="padding:0">
+      <table class="roles-table">
+        <thead>
+          <tr><th style="width:28%">Role</th><th style="width:24%">Entity</th><th>Main Responsibility</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rn">Security Officer (on-duty)</td>
+            <td>NVIDIA Security, TLV Site</td>
+            <td>Incident Commander until senior officer arrives – notifies RSOC, makes decisions, activates procedures</td>
+          </tr>
+          <tr>
+            <td class="rn">ERT</td>
+            <td>NVIDIA</td>
+            <td>Floor sweeps, locating casualties, reporting to Security Officer</td>
+          </tr>
+          <tr>
+            <td class="rn">Security Patrol</td>
+            <td>NVIDIA</td>
+            <td>Floor evacuation, checking restrooms and meeting rooms, assisting employees with disabilities</td>
+          </tr>
+          <tr>
+            <td class="rn">CBRE</td>
+            <td>CBRE</td>
+            <td>Building systems (fire/power/elevators), interface with rescue forces</td>
+          </tr>
+          <tr>
+            <td class="rn">RSOC</td>
+            <td>NVIDIA</td>
+            <td>24/7 monitoring, receiving reports, remote operational support</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title"><span>🧰</span> Emergency Equipment</div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header bg-red"><span>❤️‍🩹</span> AED</div>
+      <div class="card-body" style="font-size:13px">NVIDIA Main Lobby<br>Near OM desk | Available 24/7</div>
+    </div>
+    <div class="card">
+      <div class="card-header bg-blue"><span>🧯</span> Emergency Cabinet</div>
+      <div class="card-body" style="font-size:13px">In every shelter room (Mamad)<br>Flashlights, water, first aid, radio</div>
+    </div>
+    <div class="card">
+      <div class="card-header bg-dark"><span>🔌</span> Main Fire Panel</div>
+      <div class="card-body" style="font-size:13px">Ground Floor – Lobby<br>PA microphone + firefighters panel | CBRE operated</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    NVIDIA Israel | Rubinstein Twins Tower, Tel Aviv | Emergency SOP | Version 2025<br>
+    Internal document – Security & CBRE use only
+  </div>
+
+</div>
+
+<script>
+var activeId = null;
+function showScenario(id, cardEl) {
+  document.querySelectorAll('.scenario-detail').forEach(function(d){ d.classList.remove('active'); });
+  document.querySelectorAll('.scenario-card').forEach(function(c){ c.classList.remove('active'); });
+  if (activeId === id) { activeId = null; return; }
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    cardEl.classList.add('active');
+    activeId = id;
+    setTimeout(function(){ el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+  }
+}
+</script>
+</body>
+</html>

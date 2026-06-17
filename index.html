@@ -356,6 +356,11 @@
       <div class="s-title" style="color:#166534">חומרים מסוכנים</div>
       <div class="s-action" style="color:#666">בידוד + 102</div>
     </div>
+    <div class="scenario-card" style="background:#f0faf5;border-color:#0d6b3a;width:100%;flex-basis:100%" onclick="showScenario('assembly-map',this)">
+      <div class="s-icon">🗺️</div>
+      <div class="s-title" style="color:#0d6b3a;font-size:14px">מפת שטח הכינוס</div>
+      <div class="s-action" style="color:#666">לחץ לצפייה במפה</div>
+    </div>
   </div>
 
   <!-- ── FIRE ── -->
@@ -438,6 +443,81 @@
       <li><div class="sn sn-green">5</div><div>יוצר קשר עם נציג CBRE ו-EHS</div></li>
       <li><div class="sn sn-green">6</div><div>פינוי על פי צורך והחלטת מנהל</div></li>
     </ul>
+  </div>
+
+  <!-- ── ASSEMBLY MAP ── -->
+  <div id="assembly-map" class="scenario-detail" style="border-top-color:#0d6b3a">
+    <h3>🗺️ מפת שטח הכינוס – מדרכת הצפון, רח' יצחק שדה</h3>
+    <div style="text-align:center;margin-bottom:12px">
+      <svg viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;border-radius:8px;border:1px solid #ddd">
+        <!-- Background -->
+        <rect width="420" height="280" fill="#e8efe8"/>
+
+        <!-- Street: Yitzhak Sadeh (top, E-W) -->
+        <rect x="0" y="30" width="420" height="52" fill="#c8c8c8"/>
+        <line x1="0" y1="56" x2="420" y2="56" stroke="white" stroke-width="1.5" stroke-dasharray="20,10"/>
+        <text x="210" y="22" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#333">רח' יצחק שדה</text>
+
+        <!-- Street: side street (left, N-S) -->
+        <rect x="0" y="0" width="42" height="280" fill="#c8c8c8"/>
+
+        <!-- Street: side street (right, N-S) -->
+        <rect x="378" y="0" width="42" height="280" fill="#c8c8c8"/>
+
+        <!-- ASSEMBLY POINT – green zone on north sidewalk -->
+        <rect x="42" y="82" width="336" height="26" fill="#22c55e" rx="4"/>
+        <text x="210" y="99" text-anchor="middle" font-family="Arial" font-size="11" font-weight="900" fill="white">✔ נקודת האיסוף – מדרכת הצפון</text>
+
+        <!-- Building shadow -->
+        <rect x="82" y="120" width="260" height="130" rx="4" fill="#aaa" opacity="0.3" transform="translate(4,4)"/>
+
+        <!-- Building body -->
+        <rect x="82" y="116" width="260" height="130" rx="4" fill="#3a5fa0"/>
+        <!-- Tower A separation line -->
+        <line x1="212" y1="116" x2="212" y2="246" stroke="#1a3a7a" stroke-width="2"/>
+        <text x="147" y="188" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="white">מגדל A</text>
+        <text x="277" y="188" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="white">מגדל B</text>
+        <text x="212" y="210" text-anchor="middle" font-family="Arial" font-size="10" fill="#c8d8f8">תאומי רובינשטיין</text>
+
+        <!-- Stairwell exits with arrows to assembly -->
+        <!-- A1 south wing exit arrow (left) -->
+        <line x1="120" y1="116" x2="120" y2="108" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arr)"/>
+        <text x="120" y="126" text-anchor="middle" font-family="Arial" font-size="9" fill="white" font-weight="bold">A1</text>
+        <!-- A2 north wing exit arrow (right) -->
+        <line x1="300" y1="116" x2="300" y2="108" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arr)"/>
+        <text x="300" y="126" text-anchor="middle" font-family="Arial" font-size="9" fill="white" font-weight="bold">A2</text>
+
+        <!-- Arrow marker -->
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#22c55e"/>
+          </marker>
+        </defs>
+
+        <!-- North arrow -->
+        <g transform="translate(380,240)">
+          <circle cx="0" cy="0" r="18" fill="white" stroke="#666" stroke-width="1"/>
+          <polygon points="0,-13 -5,4 0,1 5,4" fill="#333"/>
+          <text x="0" y="14" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#333">N</text>
+        </g>
+
+        <!-- Street direction arrows on Yitzhak Sadeh -->
+        <polygon points="380,50 370,45 370,55" fill="#999"/>
+        <polygon points="40,50 50,45 50,55" fill="#999"/>
+
+        <!-- Exit label -->
+        <text x="42" y="274" font-family="Arial" font-size="9" fill="#555">← כניסה ראשית + חניון</text>
+      </svg>
+    </div>
+    <div style="background:#f0faf5;border-right:4px solid #0d6b3a;padding:10px 12px;border-radius:6px;font-size:13px;margin-bottom:12px;line-height:1.7">
+      <strong>📍 מיקום:</strong> מדרכת הצפון של הבניין, לאורך רחוב יצחק שדה, ת"א<br>
+      <strong>⚠️ שים לב:</strong> אין לחסום גישת כבאיות ואמבולנסים לכניסת הבניין<br>
+      <strong>📶 מדרגות יציאה:</strong> A1 (כנף דרומית) ו-A2 (כנף צפונית) – שתיהן יוצאות לכיוון הצפון
+    </div>
+    <a href="https://www.google.com/maps/search/?api=1&query=Yitzhak+Sadeh+4+Tel+Aviv+Israel" target="_blank"
+      style="display:inline-flex;align-items:center;gap:8px;background:#0d6b3a;color:white;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+      📍 פתח ב-Google Maps
+    </a>
   </div>
 
   <!-- ROLES -->

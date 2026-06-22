@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POS Urgences | NVIDIA Zurich</title>
+<style>
+  :root { color-scheme: light; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --nvidia-green: #76B900;
+    --nvidia-dark: #1a1a1a;
+    --red-alert: #CC0000;
+    --orange-warn: #E65C00;
+    --blue-info: #1F3564;
+    --light-bg: #f5f7fa;
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    --card-radius: 10px;
+  }
+  body { font-family: Arial, sans-serif; background: var(--light-bg); color: var(--nvidia-dark); direction: ltr; }
+
+  .top-bar {
+    background: var(--nvidia-dark); color: white;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4); flex-wrap: wrap; gap: 8px;
+  }
+  .top-bar .logo { font-size: 20px; font-weight: 900; color: var(--nvidia-green); }
+  .top-bar .doc-title { font-size: 13px; color: #ccc; font-weight: 600; }
+  .top-bar .badge {
+    background: var(--red-alert); color: white; padding: 4px 12px;
+    border-radius: 20px; font-size: 12px; font-weight: 700;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+
+  .main { max-width: 1000px; margin: 0 auto; padding: 16px 12px 40px; }
+
+  .hero-alert {
+    background: var(--red-alert); color: white;
+    border-radius: var(--card-radius); padding: 16px 20px;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 14px;
+  }
+  .hero-alert .icon-big { font-size: 32px; flex-shrink: 0; }
+  .hero-alert .assembly { font-size: 20px; font-weight: 800; margin-top: 3px; }
+  .hero-alert .never {
+    background: rgba(255,255,255,0.2); border-radius: 6px;
+    padding: 5px 10px; font-size: 14px; margin-top: 5px;
+    display: inline-block; font-weight: 700;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card { background: white; border-radius: var(--card-radius); box-shadow: var(--card-shadow); overflow: hidden; }
+  .card-header { padding: 10px 14px; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 12px 14px; }
+
+  .bg-red { background: var(--red-alert); color: white; }
+  .bg-blue { background: var(--blue-info); color: white; }
+  .bg-dark { background: #2d2d2d; color: white; }
+
+  .contacts-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .contacts-table tr:nth-child(even) { background: #f9f9f9; }
+  .contacts-table td { padding: 7px 10px; border-bottom: 1px solid #eee; }
+  .contacts-table .phone { font-weight: 800; color: var(--red-alert); font-size: 14px; white-space: nowrap; }
+  .contacts-table .role { font-weight: 600; color: var(--blue-info); }
+  .contacts-table .sep { background: #e8f0fb; font-size: 11px; font-weight: 700; color: var(--blue-info); padding: 4px 10px; }
+
+  .building-box { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .binfo { background: #f5f7fa; border-radius: 6px; padding: 8px 10px; border-left: 3px solid var(--blue-info); }
+  .binfo .binfo-label { font-size: 10px; color: #888; font-weight: 700; text-transform: uppercase; }
+  .binfo .binfo-val { font-size: 13px; font-weight: 700; color: var(--nvidia-dark); margin-top: 2px; }
+
+  .floors { display: flex; gap: 8px; margin-top: 10px; }
+  .floor-box { flex: 1; border-radius: 8px; padding: 10px; text-align: center; border: 2px solid; }
+  .floor-box.f3 { border-color: var(--red-alert); background: #fff0f0; }
+  .floor-box.f4 { border-color: var(--blue-info); background: #f0f5ff; }
+  .floor-box .fl-id { font-size: 22px; font-weight: 900; }
+  .floor-box.f3 .fl-id { color: var(--red-alert); }
+  .floor-box.f4 .fl-id { color: var(--blue-info); }
+  .floor-box .fl-note { font-size: 11px; color: #555; margin-top: 3px; }
+
+  .never-strip {
+    background: var(--red-alert); color: white; border-radius: 6px;
+    padding: 8px 12px; display: flex; align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 800; margin-top: 10px;
+  }
+
+  .section-title {
+    font-size: 16px; font-weight: 800; color: var(--blue-info);
+    margin: 18px 0 10px; display: flex; align-items: center; gap: 8px;
+    padding-bottom: 5px; border-bottom: 3px solid var(--nvidia-green);
+  }
+
+  .evac-flow { display: flex; flex-direction: column; gap: 3px; }
+  .evac-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 9px 12px; border-radius: 7px; font-size: 13px; font-weight: 600;
+  }
+  .evac-step .e-num {
+    background: white; color: var(--red-alert); border-radius: 50%;
+    width: 26px; height: 26px; min-width: 26px;
+    font-size: 12px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .evac-step .e-sub { font-size: 12px; font-weight: 400; margin-top: 2px; color: rgba(0,0,0,0.6); }
+  .es1 { background: #fff0f0; border-left: 4px solid var(--red-alert); }
+  .es2 { background: #fff5e6; border-left: 4px solid var(--orange-warn); }
+  .es3 { background: #f0f5ff; border-left: 4px solid var(--blue-info); }
+  .es4 { background: #f0fadf; border-left: 4px solid var(--nvidia-green); }
+  .es5 { background: #fff5e6; border-left: 4px solid var(--orange-warn); }
+  .es6 { background: #f0f5ff; border-left: 4px solid var(--blue-info); }
+  .evac-arrow { text-align: center; color: #bbb; font-size: 14px; }
+
+  .dis-note {
+    background: #fff8e1; border-left: 4px solid #FFC107;
+    padding: 9px 12px; border-radius: 6px; font-size: 13px; margin-top: 10px; line-height: 1.5;
+  }
+
+  .scenarios { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .scenario-card {
+    border-radius: 8px; padding: 10px 12px;
+    flex: 1; min-width: 120px; cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    text-align: center; user-select: none; border: 2px solid transparent;
+  }
+  .scenario-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .scenario-card.active { box-shadow: 0 0 0 3px var(--nvidia-green); }
+  .scenario-card .s-icon { font-size: 26px; }
+  .scenario-card .s-title { font-size: 13px; font-weight: 800; margin-top: 3px; }
+  .scenario-card .s-action { font-size: 11px; margin-top: 2px; opacity: 0.8; }
+
+  .scenario-detail {
+    display: none; background: white; border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow); padding: 16px 18px;
+    margin-bottom: 14px; border-top: 4px solid var(--red-alert);
+  }
+  .scenario-detail.active { display: block; }
+  .scenario-detail h3 { font-size: 15px; color: var(--blue-info); margin-bottom: 10px; font-weight: 800; }
+
+  .steps { list-style: none; }
+  .steps li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 7px 0; border-bottom: 1px solid #f0f0f0;
+    font-size: 13px; line-height: 1.5;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .sn {
+    border-radius: 50%; width: 22px; height: 22px; min-width: 22px;
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    color: white; margin-top: 1px;
+  }
+  .sn-red { background: var(--red-alert); }
+  .sn-orange { background: var(--orange-warn); }
+  .sn-blue { background: var(--blue-info); }
+  .sn-green { background: var(--nvidia-green); }
+  .sn-purple { background: #6B21A8; }
+
+  .roles-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .roles-table th { background: var(--blue-info); color: white; padding: 8px 10px; text-align: left; font-weight: 700; }
+  .roles-table td { padding: 7px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+  .roles-table tr:nth-child(even) td { background: #f9f9f9; }
+  .roles-table .rn { font-weight: 700; color: var(--blue-info); }
+
+  .aed-box {
+    background: #fff0f0; border: 2px solid var(--red-alert);
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px; margin-top: 10px;
+  }
+  .aed-icon { font-size: 32px; }
+  .aed-title { font-size: 14px; font-weight: 800; color: var(--red-alert); }
+  .aed-loc { font-size: 12px; color: #444; margin-top: 2px; }
+
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .grid-3 { grid-template-columns: 1fr; } }
+
+  .key-people { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+  .person-chip {
+    background: #f0f5ff; border-radius: 6px; padding: 7px 10px;
+    border-left: 3px solid var(--blue-info); font-size: 12px;
+  }
+  .person-chip .pc-name { font-weight: 700; color: var(--nvidia-dark); }
+  .person-chip .pc-role { color: #666; font-size: 11px; margin-top: 1px; }
+
+  .footer {
+    text-align: center; color: #999; font-size: 11px;
+    padding: 16px; border-top: 1px solid #e5e5e5; margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">NVIDIA</div>
+  <div class="doc-title">POS Urgences | Europaallee 39, Zurich</div>
+  <div class="badge">🔴 USAGE OPÉRATIONNEL</div>
+</div>
+
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero-alert">
+    <div class="icon-big">🚨</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;">Point de rassemblement :</div>
+      <div class="assembly">Lagerstrasse – au sud du bâtiment</div>
+      <div class="never">⛔ N'utilisez jamais l'ascenseur – escaliers uniquement</div>
+    </div>
+  </div>
+
+  <!-- CONTACTS + BUILDING -->
+  <div class="grid-2">
+
+    <div class="card">
+      <div class="card-header bg-red"><span>📞</span> Numéros d'urgence</div>
+      <div class="card-body" style="padding:0">
+        <table class="contacts-table">
+          <tr><td class="sep" colspan="2">Numéros suisses</td></tr>
+          <tr><td class="role">Urgence européenne</td><td class="phone">112</td></tr>
+          <tr><td class="role">Police</td><td class="phone">117</td></tr>
+          <tr><td class="role">Ambulance</td><td class="phone">144</td></tr>
+          <tr><td class="role">Pompiers</td><td class="phone">118</td></tr>
+          <tr><td class="role">Toxicologie (Tox Info)</td><td class="phone">145</td></tr>
+          <tr><td class="role">Médecin urgentiste</td><td class="phone">+41 44 421 21 21</td></tr>
+          <tr><td class="sep" colspan="2">NVIDIA Interne</td></tr>
+          <tr><td class="role">RSOC Israël 24h/24 (urgences)</td><td class="phone">+972 74-723-6000</td></tr>
+          <tr><td class="role">RSOC Israël 24h/24 (non-urgences)</td><td class="phone">+972 74-723-6003/4</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header bg-blue"><span>🏢</span> Informations sur le bâtiment</div>
+      <div class="card-body">
+        <div class="building-box">
+          <div class="binfo"><div class="binfo-label">Adresse</div><div class="binfo-val">Europaallee 39, 8004 Zurich</div></div>
+          <div class="binfo"><div class="binfo-label">Étages NVIDIA</div><div class="binfo-val">3e et 4e étage</div></div>
+          <div class="binfo"><div class="binfo-label">Horaires d'ouverture</div><div class="binfo-val">Lun–Ven 08h00–18h00</div></div>
+          <div class="binfo"><div class="binfo-label">Horaires accueil</div><div class="binfo-val">08h–12h / 13h–17h</div></div>
+          <div class="binfo"><div class="binfo-label">DAE – 3e étage</div><div class="binfo-val">Près entrée principale, derrière l'OM</div></div>
+          <div class="binfo"><div class="binfo-label">DAE – 4e étage</div><div class="binfo-val">Salle des infirmières</div></div>
+        </div>
+        <div class="floors">
+          <div class="floor-box f3">
+            <div class="fl-id">3e</div>
+            <div class="fl-note">DAE près entrée principale / OM</div>
+          </div>
+          <div class="floor-box f4">
+            <div class="fl-id">4e</div>
+            <div class="fl-note">DAE salle des infirmières</div>
+          </div>
+        </div>
+        <div class="never-strip"><span>🚫</span> Pas d'ascenseur ! Escaliers uniquement !</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- KEY PEOPLE -->
+  <div class="section-title"><span>👤</span> Contacts clés – Site de Zurich</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body">
+      <div class="key-people">
+        <div class="person-chip"><div class="pc-name">Adam Moravanszky</div><div class="pc-role">Responsable du site</div></div>
+        <div class="person-chip"><div class="pc-name">Elsje Du Preez</div><div class="pc-role">Office Manager / Responsable sécurité / ERT / Agent d'évacuation</div></div>
+        <div class="person-chip"><div class="pc-name">Catherine Luke</div><div class="pc-role">Office Manager / Responsable sécurité / ERT / Agent d'évacuation</div></div>
+        <div class="person-chip"><div class="pc-name">Victor Echem</div><div class="pc-role">IT (sur site) / Agent d'évacuation</div></div>
+        <div class="person-chip"><div class="pc-name">Bernadeta Karrer & Sofia Ventura</div><div class="pc-role">RH</div></div>
+        <div class="person-chip"><div class="pc-name">RSOC-Israel@nvidia.com</div><div class="pc-role">Sécurité NVIDIA RSOC – E-mail</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVAC FLOW -->
+  <div class="section-title"><span>🏃</span> Procédure d'évacuation – Étape par étape</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body">
+      <div class="evac-flow">
+
+        <div class="evac-step es1">
+          <div class="e-num">1</div>
+          <div>
+            <div><strong>Déclenchement de l'alarme</strong></div>
+            <div class="e-sub">Alarme automatique / déclencheur manuel activé / annonce sonore</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es2">
+          <div class="e-num">2</div>
+          <div>
+            <div><strong>Le responsable d'étage informe le RSOC et la gestion du bâtiment</strong></div>
+            <div class="e-sub">RSOC : +972 74-723-6000 | Responsables sécurité : Elsje / Catherine</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es3">
+          <div class="e-num">3</div>
+          <div>
+            <div><strong>ERT – Inspection et évacuation des étages</strong></div>
+            <div class="e-sub">Escaliers uniquement | Vérifier toutes les pièces, toilettes et salles de réunion | Signaler les personnes bloquées</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es4">
+          <div class="e-num">4</div>
+          <div>
+            <div><strong>Rassemblement au point de rassemblement</strong></div>
+            <div class="e-sub">Lagerstrasse – au sud du bâtiment | Ne pas bloquer l'accès aux véhicules de secours</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es5">
+          <div class="e-num">5</div>
+          <div>
+            <div><strong>Appel nominal</strong></div>
+            <div class="e-sub">Les responsables d'équipe effectuent l'appel → signalent les absents au responsable d'étage</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es6">
+          <div class="e-num">6</div>
+          <div>
+            <div><strong>Retour dans le bâtiment – uniquement après autorisation</strong></div>
+            <div class="e-sub">Autorisation des services de secours et du commandant d'incident uniquement → retour contrôlé</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dis-note">
+        <strong>♿ Employés en situation de handicap :</strong> Le responsable d'étage s'assure que des collègues aident à la descente des escaliers. Si impossible → rester sur le palier, informer le responsable d'étage avec l'étage et l'emplacement exact pour les services de secours.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO CARDS -->
+  <div class="section-title"><span>⚡</span> Types d'incidents – Appuyez pour les détails</div>
+  <div class="scenarios">
+    <div class="scenario-card" style="background:#fff0f0;border-color:var(--red-alert)" onclick="showScenario('fire',this)">
+      <div class="s-icon">🔥</div>
+      <div class="s-title" style="color:var(--red-alert)">Incendie / Fumée</div>
+      <div class="s-action" style="color:#666">Éteindre + Évacuer</div>
+    </div>
+    <div class="scenario-card" style="background:#f5f0ff;border-color:#6B21A8" onclick="showScenario('medical',this)">
+      <div class="s-icon">🚑</div>
+      <div class="s-title" style="color:#6B21A8">Urgence médicale</div>
+      <div class="s-action" style="color:#666">144 + DAE</div>
+    </div>
+    <div class="scenario-card" style="background:#f0f5ff;border-color:var(--blue-info)" onclick="showScenario('quake',this)">
+      <div class="s-icon">🌍</div>
+      <div class="s-title" style="color:var(--blue-info)">Séisme</div>
+      <div class="s-action" style="color:#666">Baisser-Couvrir-Tenir</div>
+    </div>
+    <div class="scenario-card" style="background:#fff0f0;border-color:#8B0000" onclick="showScenario('security',this)">
+      <div class="s-icon">🔫</div>
+      <div class="s-title" style="color:#8B0000">Incident de sécurité</div>
+      <div class="s-action" style="color:#666">Fuir-Se cacher-Combattre</div>
+    </div>
+    <div class="scenario-card" style="background:#f0fff5;border-color:#166534" onclick="showScenario('hazmat',this)">
+      <div class="s-icon">☢️</div>
+      <div class="s-title" style="color:#166534">Matières dangereuses</div>
+      <div class="s-action" style="color:#666">Isoler + 118</div>
+    </div>
+    <div class="scenario-card" style="background:#f0faf5;border-color:#0d6b3a;width:100%;flex-basis:100%" onclick="showScenario('assembly-map',this)">
+      <div class="s-icon">🗺️</div>
+      <div class="s-title" style="color:#0d6b3a;font-size:14px">Plan du point de rassemblement</div>
+      <div class="s-action" style="color:#666">Appuyer pour voir la carte</div>
+    </div>
+  </div>
+
+  <!-- FIRE -->
+  <div id="fire" class="scenario-detail" style="border-top-color:var(--red-alert)">
+    <h3>🔥 Incendie / Fumée</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div>En cas de découverte d'incendie – tentez d'éteindre avec l'extincteur le plus proche (CO2 pour les incendies électriques, mousse pour les autres). Si vous ne maîtrisez pas l'incendie – reculez et évacuez les personnes présentes.</div></li>
+      <li><div class="sn sn-red">2</div><div>Activer le déclencheur manuel d'alarme incendie | Appeler les pompiers : <strong>118</strong></div></li>
+      <li><div class="sn sn-red">3</div><div>Le responsable d'étage informe le RSOC : <strong>+972 74-723-6000</strong></div></li>
+      <li><div class="sn sn-red">4</div><div>Évacuer par les escaliers – <strong>pas d'ascenseur</strong> | ERT : dernier à quitter, vérifie toutes les pièces</div></li>
+      <li><div class="sn sn-red">5</div><div>Rassemblement à Lagerstrasse | Appel nominal | Signaler les absents</div></li>
+      <li><div class="sn sn-red">6</div><div>Ne pas réintégrer le bâtiment sans autorisation explicite des pompiers ou d'une personne habilitée</div></li>
+    </ul>
+    <div style="background:#fff8e1;border-left:3px solid #E65C00;padding:9px 12px;border-radius:6px;font-size:12px;margin-top:10px">
+      <strong>Types d'extincteurs :</strong> CO2 → incendies électriques (NER/Labs) &nbsp;|&nbsp; Mousse → tous les autres incendies<br>
+      <strong>Agents d'évacuation :</strong> Victor Echem · Elsje Du Preez · Catherine Luke
+    </div>
+  </div>
+
+  <!-- MEDICAL -->
+  <div id="medical" class="scenario-detail" style="border-top-color:#6B21A8">
+    <h3>🚑 Urgence médicale</h3>
+    <ul class="steps">
+      <li><div class="sn sn-purple">1</div><div>Appeler l'ambulance : <strong>144</strong> | Urgences européennes : <strong>112</strong></div></li>
+      <li><div class="sn sn-purple">2</div><div>Envoyer quelqu'un chercher le DAE immédiatement :<br>
+        3e étage → près de la porte principale derrière l'OM<br>
+        4e étage → Salle des infirmières</div></li>
+      <li><div class="sn sn-purple">3</div><div>Sécuriser la zone – éloigner les personnes non impliquées</div></li>
+      <li><div class="sn sn-purple">4</div><div>Le responsable d'étage informe le RSOC et s'assure de l'accès libre pour les secours</div></li>
+      <li><div class="sn sn-purple">5</div><div>Ne pas déplacer la victime sans formation</div></li>
+      <li><div class="sn sn-purple">6</div><div>Poster quelqu'un à l'entrée du bâtiment pour guider l'équipe d'ambulance</div></li>
+    </ul>
+    <div class="aed-box">
+      <div class="aed-icon">❤️‍🩹</div>
+      <div>
+        <div class="aed-title">DAE – Défibrillateur Automatique Externe</div>
+        <div class="aed-loc">3e étage : près de la porte principale, derrière l'OM<br>4e étage : Salle des infirmières | 16 secouristes formés sur site</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EARTHQUAKE -->
+  <div id="quake" class="scenario-detail" style="border-top-color:var(--blue-info)">
+    <h3>🌍 Séisme</h3>
+    <ul class="steps">
+      <li><div class="sn sn-blue">1</div><div><strong>BAISSER</strong> – Se mettre immédiatement à genoux et mains au sol</div></li>
+      <li><div class="sn sn-blue">2</div><div><strong>SE COUVRIR</strong> – S'abriter sous un bureau ou une table solide. Si impossible, couvrir la tête et le cou avec les bras. S'éloigner des fenêtres.</div></li>
+      <li><div class="sn sn-blue">3</div><div><strong>TENIR</strong> – Rester en position jusqu'à l'arrêt des secousses</div></li>
+      <li><div class="sn sn-blue">4</div><div>Une fois les secousses arrêtées – évacuer par les escaliers vers Lagerstrasse</div></li>
+      <li><div class="sn sn-blue">5</div><div>Informer le RSOC : <strong>+972 74-723-6000</strong></div></li>
+      <li><div class="sn sn-blue">6</div><div>Surveiller les répliques | À l'extérieur, s'éloigner des débris et lignes électriques tombées</div></li>
+      <li><div class="sn sn-blue">7</div><div><strong>Ne pas utiliser l'ascenseur</strong> | Ne pas réintégrer le bâtiment sans autorisation des secours</div></li>
+    </ul>
+  </div>
+
+  <!-- SECURITY -->
+  <div id="security" class="scenario-detail" style="border-top-color:#8B0000">
+    <h3>🔫 Incident de sécurité / Violence – Fuir · Se cacher · Combattre</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div><strong style="color:var(--red-alert)">FUIR</strong> – Quitter la zone immédiatement, abandonner ses affaires</div></li>
+      <li><div class="sn sn-red">2</div><div><strong style="color:var(--orange-warn)">SE CACHER</strong> – Si vous ne pouvez pas fuir : verrouiller/barricader la porte, éteindre les lumières, rester baissé et silencieux</div></li>
+      <li><div class="sn sn-red">3</div><div><strong style="color:#8B0000">COMBATTRE</strong> – En dernier recours uniquement, avec tous les moyens disponibles</div></li>
+      <li><div class="sn sn-red">4</div><div>Le responsable d'étage appelle la police <strong>117</strong> et le RSOC <strong>+972 74-723-6000</strong>. Initier le confinement.</div></li>
+      <li><div class="sn sn-red">5</div><div>Ne pas tenter un secours seul – attendre les forces de sécurité</div></li>
+    </ul>
+  </div>
+
+  <!-- HAZMAT -->
+  <div id="hazmat" class="scenario-detail" style="border-top-color:#166534">
+    <h3>☢️ Matières dangereuses</h3>
+    <ul class="steps">
+      <li><div class="sn sn-green">1</div><div>Isoler la zone immédiatement – éloigner les personnes à 50+ mètres</div></li>
+      <li><div class="sn sn-green">2</div><div>Ne pas toucher / sentir – identifier à distance si possible</div></li>
+      <li><div class="sn sn-green">3</div><div>Pompiers : <strong>118</strong> avec les détails de la substance si connue | Toxicologie : <strong>145</strong></div></li>
+      <li><div class="sn sn-green">4</div><div>Informer le RSOC : <strong>+972 74-723-6000</strong></div></li>
+      <li><div class="sn sn-green">5</div><div>Contacter les responsables sécurité (Elsje / Catherine) et le service HSE</div></li>
+      <li><div class="sn sn-green">6</div><div>Évacuer selon les instructions des services de secours</div></li>
+    </ul>
+  </div>
+
+  <!-- ASSEMBLY MAP -->
+  <div id="assembly-map" class="scenario-detail" style="border-top-color:#0d6b3a">
+    <h3>🗺️ Plan du point de rassemblement – Lagerstrasse, au sud d'Europaallee 39</h3>
+    <div style="text-align:center;margin-bottom:12px">
+      <svg viewBox="0 0 420 290" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;border-radius:8px;border:1px solid #ddd">
+        <rect width="420" height="290" fill="#e8efe8"/>
+        <rect x="0" y="30" width="420" height="46" fill="#c8c8c8"/>
+        <line x1="0" y1="53" x2="420" y2="53" stroke="white" stroke-width="1.5" stroke-dasharray="18,9"/>
+        <text x="210" y="21" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#333">Europaallee</text>
+        <rect x="0" y="0" width="38" height="290" fill="#c8c8c8"/>
+        <rect x="382" y="0" width="38" height="290" fill="#c8c8c8"/>
+        <rect x="88" y="80" width="244" height="104" rx="4" fill="#aaa" opacity="0.3" transform="translate(4,4)"/>
+        <rect x="88" y="76" width="244" height="104" rx="4" fill="#3a5fa0"/>
+        <text x="210" y="124" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="white">NVIDIA Zurich</text>
+        <text x="210" y="143" text-anchor="middle" font-family="Arial" font-size="11" fill="#c8d8f8">Europaallee 39 – 3e &amp; 4e étage</text>
+        <text x="210" y="160" text-anchor="middle" font-family="Arial" font-size="9" fill="#9ab8e8">Sortie → Lagerstrasse ↓</text>
+        <defs>
+          <marker id="arrzrhfr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#22c55e"/>
+          </marker>
+        </defs>
+        <line x1="155" y1="180" x2="155" y2="196" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrzrhfr)"/>
+        <line x1="265" y1="180" x2="265" y2="196" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrzrhfr)"/>
+        <rect x="0" y="210" width="420" height="44" fill="#c8c8c8"/>
+        <line x1="0" y1="232" x2="420" y2="232" stroke="white" stroke-width="1.5" stroke-dasharray="18,9"/>
+        <text x="210" y="207" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#333">Lagerstrasse</text>
+        <rect x="38" y="196" width="344" height="16" fill="#22c55e" rx="3"/>
+        <text x="210" y="208" text-anchor="middle" font-family="Arial" font-size="10" font-weight="900" fill="white">✔ POINT DE RASSEMBLEMENT</text>
+        <g transform="translate(388,258)">
+          <circle cx="0" cy="0" r="18" fill="white" stroke="#666" stroke-width="1"/>
+          <polygon points="0,-13 -5,4 0,1 5,4" fill="#333"/>
+          <text x="0" y="14" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#333">N</text>
+        </g>
+        <text x="210" y="280" text-anchor="middle" font-family="Arial" font-size="9" fill="#555">← Gare principale de Zurich (Zürich HB ~350m)</text>
+      </svg>
+    </div>
+    <div style="background:#f0faf5;border-left:4px solid #0d6b3a;padding:10px 12px;border-radius:6px;font-size:13px;margin-bottom:12px;line-height:1.7">
+      <strong>📍 Emplacement :</strong> Lagerstrasse – trottoir nord, côté sud d'Europaallee 39, 8004 Zurich<br>
+      <strong>⚠️ Attention :</strong> Ne pas bloquer l'accès des camions de pompiers et ambulances à l'entrée du bâtiment sur Europaallee<br>
+      <strong>📶 Sorties :</strong> Utiliser les sorties côté sud du bâtiment pour rejoindre directement la Lagerstrasse
+    </div>
+    <a href="https://www.google.com/maps/search/?api=1&query=Europaallee+39+Zurich+Switzerland" target="_blank"
+      style="display:inline-flex;align-items:center;gap:8px;background:#0d6b3a;color:white;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+      📍 Ouvrir dans Google Maps
+    </a>
+  </div>
+
+  <!-- ROLES -->
+  <div class="section-title"><span>👥</span> Rôles en cas d'urgence</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body" style="padding:0">
+      <table class="roles-table">
+        <thead>
+          <tr><th style="width:30%">Rôle</th><th style="width:28%">Personne(s)</th><th>Responsabilité principale</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rn">Responsable d'étage / Commandant d'incident</td>
+            <td>Elsje Du Preez<br>Catherine Luke</td>
+            <td>Gère l'incident jusqu'à l'arrivée d'un supérieur – informe le RSOC, prend les décisions, active les procédures</td>
+          </tr>
+          <tr>
+            <td class="rn">ERT (Équipe d'intervention d'urgence)</td>
+            <td>Elsje Du Preez<br>Catherine Luke</td>
+            <td>Inspection des étages, localisation des victimes, rapport au responsable d'étage ; derniers à quitter chaque étage</td>
+          </tr>
+          <tr>
+            <td class="rn">Agent d'évacuation incendie</td>
+            <td>Victor Echem<br>Elsje Du Preez<br>Catherine Luke</td>
+            <td>Évacuation des étages, vérification des toilettes et salles de réunion, assistance aux personnes en situation de handicap</td>
+          </tr>
+          <tr>
+            <td class="rn">RSOC Israël</td>
+            <td>Sécurité NVIDIA 24h/24</td>
+            <td>Surveillance 24h/24, réception des signalements, support opérationnel à distance</td>
+          </tr>
+          <tr>
+            <td class="rn">Responsable du site</td>
+            <td>Adam Moravanszky</td>
+            <td>Décideur principal sur site ; autorité finale pour l'autorisation de réintégration</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="section-title"><span>🧰</span> Équipement d'urgence</div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header bg-red"><span>❤️‍🩹</span> DAE</div>
+      <div class="card-body" style="font-size:13px">
+        3e étage : près entrée principale / OM<br>
+        4e étage : Salle des infirmières<br>
+        <span style="color:#888;font-size:11px">16 secouristes formés sur site</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header bg-red"><span>🧯</span> Extincteurs</div>
+      <div class="card-body" style="font-size:13px">
+        CO2 → incendies électriques (NER/Labs)<br>
+        Mousse → tous les autres incendies<br>
+        <span style="color:#888;font-size:11px">Détection fumée + sprinklers sur les deux étages</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header bg-dark"><span>🔌</span> Alarme incendie</div>
+      <div class="card-body" style="font-size:13px">
+        Déclencheurs manuels sur chaque étage<br>
+        Détection fumée + sprinklers<br>
+        <span style="color:#888;font-size:11px">Membres ERT formés à l'utilisation</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    NVIDIA Switzerland AG | Europaallee 39, 3e &amp; 4e étage, 8004 Zurich | POS Urgences | Version 2025<br>
+    Document interne – usage opérationnel réservé aux responsables sécurité et à l'ERT
+  </div>
+
+</div>
+
+<script>
+var activeId = null;
+function showScenario(id, cardEl) {
+  document.querySelectorAll('.scenario-detail').forEach(function(d){ d.classList.remove('active'); });
+  document.querySelectorAll('.scenario-card').forEach(function(c){ c.classList.remove('active'); });
+  if (activeId === id) { activeId = null; return; }
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    cardEl.classList.add('active');
+    activeId = id;
+    setTimeout(function(){ el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+  }
+}
+</script>
+</body>
+</html>

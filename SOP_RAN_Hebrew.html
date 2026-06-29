@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP חירום ופינוי | NVIDIA רעננה</title>
+<style>
+  :root { color-scheme: light; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --nvidia-green: #76B900;
+    --nvidia-dark: #1a1a1a;
+    --red-alert: #CC0000;
+    --orange-warn: #E65C00;
+    --blue-info: #1F3564;
+    --light-bg: #f5f7fa;
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    --card-radius: 10px;
+  }
+  body { font-family: Arial, sans-serif; background: var(--light-bg); color: var(--nvidia-dark); direction: rtl; }
+
+  .top-bar {
+    background: var(--nvidia-dark); color: white;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4); flex-wrap: wrap; gap: 8px;
+  }
+  .top-bar .logo { font-size: 20px; font-weight: 900; color: var(--nvidia-green); }
+  .top-bar .doc-title { font-size: 13px; color: #ccc; font-weight: 600; }
+  .top-bar .badge {
+    background: var(--red-alert); color: white; padding: 4px 12px;
+    border-radius: 20px; font-size: 12px; font-weight: 700;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+
+  .main { max-width: 1000px; margin: 0 auto; padding: 16px 12px 40px; }
+
+  .hero-alert {
+    background: var(--red-alert); color: white;
+    border-radius: var(--card-radius); padding: 16px 20px;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 14px;
+  }
+  .hero-alert .icon-big { font-size: 32px; flex-shrink: 0; }
+  .hero-alert .assembly { font-size: 20px; font-weight: 800; margin-top: 3px; }
+  .hero-alert .never {
+    background: rgba(255,255,255,0.2); border-radius: 6px;
+    padding: 5px 10px; font-size: 14px; margin-top: 5px;
+    display: inline-block; font-weight: 700;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card { background: white; border-radius: var(--card-radius); box-shadow: var(--card-shadow); overflow: hidden; }
+  .card-header { padding: 10px 14px; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 12px 14px; }
+
+  .bg-red { background: var(--red-alert); color: white; }
+  .bg-blue { background: var(--blue-info); color: white; }
+  .bg-dark { background: #2d2d2d; color: white; }
+  .bg-green { background: var(--nvidia-green); color: white; }
+
+  .contacts-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .contacts-table tr:nth-child(even) { background: #f9f9f9; }
+  .contacts-table td { padding: 7px 10px; border-bottom: 1px solid #eee; }
+  .contacts-table .phone { font-weight: 800; color: var(--red-alert); font-size: 14px; white-space: nowrap; direction: ltr; }
+  .contacts-table .role { font-weight: 600; color: var(--blue-info); }
+  .contacts-table .sep { background: #e8f0fb; font-size: 11px; font-weight: 700; color: var(--blue-info); padding: 4px 10px; }
+
+  .building-box { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .binfo { background: #f5f7fa; border-radius: 6px; padding: 8px 10px; border-right: 3px solid var(--blue-info); }
+  .binfo .binfo-label { font-size: 10px; color: #888; font-weight: 700; text-transform: uppercase; }
+  .binfo .binfo-val { font-size: 13px; font-weight: 700; color: var(--nvidia-dark); margin-top: 2px; }
+
+  .floors-strip { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .floor-chip {
+    border-radius: 6px; padding: 6px 10px; text-align: center;
+    font-size: 13px; font-weight: 800; border: 2px solid;
+    min-width: 48px;
+  }
+  .floor-chip.nvidia { border-color: var(--blue-info); background: #f0f5ff; color: var(--blue-info); }
+  .floor-chip.mamad { border-color: var(--orange-warn); background: #fff5e6; color: var(--orange-warn); }
+  .floor-chip-label { font-size: 10px; font-weight: 400; display: block; }
+
+  .never-strip {
+    background: var(--red-alert); color: white; border-radius: 6px;
+    padding: 8px 12px; display: flex; align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 800; margin-top: 10px;
+  }
+
+  .section-title {
+    font-size: 16px; font-weight: 800; color: var(--blue-info);
+    margin: 18px 0 10px; display: flex; align-items: center; gap: 8px;
+    padding-bottom: 5px; border-bottom: 3px solid var(--nvidia-green);
+  }
+
+  .evac-flow { display: flex; flex-direction: column; gap: 3px; }
+  .evac-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 9px 12px; border-radius: 7px; font-size: 13px; font-weight: 600;
+  }
+  .evac-step .e-num {
+    background: white; color: var(--red-alert); border-radius: 50%;
+    width: 26px; height: 26px; min-width: 26px;
+    font-size: 12px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .evac-step .e-sub { font-size: 12px; font-weight: 400; margin-top: 2px; color: rgba(0,0,0,0.6); }
+  .es1 { background: #fff0f0; border-right: 4px solid var(--red-alert); }
+  .es2 { background: #fff5e6; border-right: 4px solid var(--orange-warn); }
+  .es3 { background: #f0f5ff; border-right: 4px solid var(--blue-info); }
+  .es4 { background: #f0fadf; border-right: 4px solid var(--nvidia-green); }
+  .es5 { background: #fff5e6; border-right: 4px solid var(--orange-warn); }
+  .es6 { background: #f0f5ff; border-right: 4px solid var(--blue-info); }
+  .evac-arrow { text-align: center; color: #bbb; font-size: 14px; }
+
+  .dis-note {
+    background: #fff8e1; border-right: 4px solid #FFC107;
+    padding: 9px 12px; border-radius: 6px; font-size: 13px; margin-top: 10px; line-height: 1.5;
+  }
+
+  .scenarios { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .scenario-card {
+    border-radius: 8px; padding: 10px 12px;
+    flex: 1; min-width: 120px; cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    text-align: center; user-select: none; border: 2px solid transparent;
+  }
+  .scenario-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .scenario-card.active { box-shadow: 0 0 0 3px var(--nvidia-green); }
+  .scenario-card .s-icon { font-size: 26px; }
+  .scenario-card .s-title { font-size: 13px; font-weight: 800; margin-top: 3px; }
+  .scenario-card .s-action { font-size: 11px; margin-top: 2px; opacity: 0.8; }
+
+  .scenario-detail {
+    display: none; background: white; border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow); padding: 16px 18px;
+    margin-bottom: 14px; border-top: 4px solid var(--red-alert);
+  }
+  .scenario-detail.active { display: block; }
+  .scenario-detail h3 { font-size: 15px; color: var(--blue-info); margin-bottom: 10px; font-weight: 800; }
+
+  .steps { list-style: none; }
+  .steps li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 7px 0; border-bottom: 1px solid #f0f0f0;
+    font-size: 13px; line-height: 1.5;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .sn {
+    border-radius: 50%; width: 22px; height: 22px; min-width: 22px;
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    color: white; margin-top: 1px;
+  }
+  .sn-red { background: var(--red-alert); }
+  .sn-orange { background: var(--orange-warn); }
+  .sn-blue { background: var(--blue-info); }
+  .sn-green { background: var(--nvidia-green); }
+  .sn-purple { background: #6B21A8; }
+
+  .roles-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .roles-table th { background: var(--blue-info); color: white; padding: 8px 10px; text-align: right; font-weight: 700; }
+  .roles-table td { padding: 7px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+  .roles-table tr:nth-child(even) td { background: #f9f9f9; }
+  .roles-table .rn { font-weight: 700; color: var(--blue-info); }
+
+  .aed-box {
+    background: #fff0f0; border: 2px solid var(--red-alert);
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px; margin-top: 10px;
+  }
+  .aed-icon { font-size: 32px; }
+  .aed-title { font-size: 14px; font-weight: 800; color: var(--red-alert); }
+  .aed-loc { font-size: 12px; color: #444; margin-top: 2px; }
+
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .grid-3 { grid-template-columns: 1fr; } }
+
+  .footer {
+    text-align: center; color: #999; font-size: 11px;
+    padding: 16px; border-top: 1px solid #e5e5e5; margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">NVIDIA</div>
+  <div class="doc-title">SOP חירום ופינוי | 13 זרחין, רעננה</div>
+  <div class="badge">🔴 לשימוש תפעולי</div>
+</div>
+
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero-alert">
+    <div class="icon-big">🚨</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;">נקודת האיסוף:</div>
+      <div class="assembly">מחוץ לכניסת הבניין – 13 זרחין, רעננה</div>
+      <div class="never">⛔ אסור להשתמש במעלית – מדרגות בלבד</div>
+    </div>
+  </div>
+
+  <!-- CONTACTS + BUILDING -->
+  <div class="grid-2">
+
+    <div class="card">
+      <div class="card-header bg-red"><span>📞</span> מספרי חירום</div>
+      <div class="card-body" style="padding:0">
+        <table class="contacts-table">
+          <tr><td class="sep" colspan="2">חירום לאומי</td></tr>
+          <tr><td class="role">כב"א</td><td class="phone">102</td></tr>
+          <tr><td class="role">מד"א</td><td class="phone">101</td></tr>
+          <tr><td class="role">משטרה</td><td class="phone">100</td></tr>
+          <tr><td class="sep" colspan="2">NVIDIA פנימי</td></tr>
+          <tr><td class="role">RSOC 24/7 (חירום)</td><td class="phone">074-723-6000/3/4</td></tr>
+          <tr><td class="role">RSOC 24/7 (חלופי)</td><td class="phone">04-959-0199</td></tr>
+          <tr><td class="sep" colspan="2">אתר רעננה</td></tr>
+          <tr><td class="role">אבטח NVIDIA</td><td class="phone">054-8292120</td></tr>
+          <tr><td class="role">שומר לובי B</td><td class="phone">052-5999729</td></tr>
+          <tr><td class="role">מנהל בניין – עוז ברקוביץ'</td><td class="phone">054-525-3637</td></tr>
+          <tr><td class="role">CBRE מתקנים – חנן יסרוף</td><td class="phone">050-216-1634</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header bg-blue"><span>🏢</span> מידע על הבניין</div>
+      <div class="card-body">
+        <div class="building-box">
+          <div class="binfo"><div class="binfo-label">כתובת</div><div class="binfo-val">13 זרחין, רעננה</div></div>
+          <div class="binfo"><div class="binfo-label">עובדים</div><div class="binfo-val">~247</div></div>
+          <div class="binfo"><div class="binfo-label">חברת ביטחון</div><div class="binfo-val">מוקד אמון</div></div>
+          <div class="binfo"><div class="binfo-label">AED</div><div class="binfo-val">קומת קרקע – אזור משותף</div></div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;margin-bottom:6px">קומות NVIDIA</div>
+          <div class="floors-strip">
+            <div class="floor-chip nvidia">4<span class="floor-chip-label">משרדים</span></div>
+            <div class="floor-chip nvidia">6<span class="floor-chip-label">משרדים</span></div>
+            <div class="floor-chip nvidia">7<span class="floor-chip-label">משרדים</span></div>
+            <div class="floor-chip nvidia">8<span class="floor-chip-label">משרדים</span></div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;margin:8px 0 6px">ממ"קים (מקלטים)</div>
+          <div class="floors-strip">
+            <div class="floor-chip mamad">6<span class="floor-chip-label">ממ"ק</span></div>
+            <div class="floor-chip mamad">7<span class="floor-chip-label">ממ"ק</span></div>
+            <div class="floor-chip mamad">8<span class="floor-chip-label">ממ"ק</span></div>
+          </div>
+        </div>
+        <div class="never-strip"><span>🚫</span> לא מעלית! מדרגות בלבד!</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EVAC FLOW -->
+  <div class="section-title"><span>🏃</span> נוהל פינוי שלב-אחר-שלב</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body">
+      <div class="evac-flow">
+
+        <div class="evac-step es1">
+          <div class="e-num">1</div>
+          <div>
+            <div><strong>הפעלת אזעקה / כריזה</strong></div>
+            <div class="e-sub">הופעלה מערכת אזעקה / לחצן ידני / הכרזת PA – הפסק כל פעילות</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es2">
+          <div class="e-num">2</div>
+          <div>
+            <div><strong>אבטח NVIDIA נוטל פיקוד ומיידע RSOC</strong></div>
+            <div class="e-sub">RSOC: 074-723-6000/3/4 | מנהל ביטחון ירין וקנין | שומר בניין</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es3">
+          <div class="e-num">3</div>
+          <div>
+            <div><strong>ERT – אוסף ציוד + סריקת קומות</strong></div>
+            <div class="e-sub">ERT מגיע לארון חירום | אישור מוכנות בקבוצת WhatsApp | סריקת קומות מוקצות + פינוי עובדים במדרגות</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es4">
+          <div class="e-num">4</div>
+          <div>
+            <div><strong>כינוס בנקודת האיסוף</strong></div>
+            <div class="e-sub">מחוץ לכניסת הבניין, 13 זרחין | לא לחסום גישת כבאיות ואמבולנס</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es5">
+          <div class="e-num">5</div>
+          <div>
+            <div><strong>בדיקת נוכחות</strong></div>
+            <div class="e-sub">מנהל צוות עורך ספירה → מדווח לאחמ"ש על חסרים מיידית</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+
+        <div class="evac-step es6">
+          <div class="e-num">6</div>
+          <div>
+            <div><strong>חזרה לבניין – רק לאחר אישור מנהל האירוע</strong></div>
+            <div class="e-sub">אישור כוחות ההצלה ואחמ"ש בלבד → כניסה מבוקרת</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dis-note">
+        <strong>♿ עובדים עם מוגבלות:</strong> ERT מוודא סיוע של עובדים נוספים בירידה במדרגות. אם לא ניתן – יישאר על הפודסת עם עדכון קומה ומיקום מדויק לאחמ"ש ולכוחות ההצלה.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO CARDS -->
+  <div class="section-title"><span>⚡</span> סוגי אירועים – לחץ לפרטים</div>
+  <div class="scenarios">
+    <div class="scenario-card" style="background:#fff0f0;border-color:var(--red-alert)" onclick="showScenario('fire',this)">
+      <div class="s-icon">🔥</div>
+      <div class="s-title" style="color:var(--red-alert)">אש / עשן</div>
+      <div class="s-action" style="color:#666">כבה + פנה</div>
+    </div>
+    <div class="scenario-card" style="background:#fff5e6;border-color:var(--orange-warn)" onclick="showScenario('rockets',this)">
+      <div class="s-icon">🚀</div>
+      <div class="s-title" style="color:var(--orange-warn)">אזעקה – רקטות/טילים</div>
+      <div class="s-action" style="color:#666">ממ"ק קומות 6/7/8</div>
+    </div>
+    <div class="scenario-card" style="background:#fff0f0;border-color:#8B0000" onclick="showScenario('security',this)">
+      <div class="s-icon">🔫</div>
+      <div class="s-title" style="color:#8B0000">אירוע ביטחוני</div>
+      <div class="s-action" style="color:#666">Run-Hide-Fight</div>
+    </div>
+    <div class="scenario-card" style="background:#f0f5ff;border-color:var(--blue-info)" onclick="showScenario('quake',this)">
+      <div class="s-icon">🌍</div>
+      <div class="s-title" style="color:var(--blue-info)">רעידת אדמה</div>
+      <div class="s-action" style="color:#666">ממ"ק + פינוי</div>
+    </div>
+    <div class="scenario-card" style="background:#f5f0ff;border-color:#6B21A8" onclick="showScenario('medical',this)">
+      <div class="s-icon">🚑</div>
+      <div class="s-title" style="color:#6B21A8">חירום רפואי</div>
+      <div class="s-action" style="color:#666">101 + AED</div>
+    </div>
+    <div class="scenario-card" style="background:#f0fff5;border-color:#166534" onclick="showScenario('hazmat',this)">
+      <div class="s-icon">☢️</div>
+      <div class="s-title" style="color:#166534">חומרים מסוכנים</div>
+      <div class="s-action" style="color:#666">בידוד + 102</div>
+    </div>
+    <div class="scenario-card" style="background:#f0faf5;border-color:#0d6b3a;width:100%;flex-basis:100%" onclick="showScenario('assembly-map',this)">
+      <div class="s-icon">🗺️</div>
+      <div class="s-title" style="color:#0d6b3a;font-size:14px">מפת שטח הכינוס</div>
+      <div class="s-action" style="color:#666">לחץ לצפייה במפה</div>
+    </div>
+  </div>
+
+  <!-- FIRE -->
+  <div id="fire" class="scenario-detail" style="border-top-color:var(--red-alert)">
+    <h3>🔥 אש / עשן</h3>
+    <div style="background:#fff0f0;border-right:4px solid var(--red-alert);padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:10px;font-weight:700">
+      ⚠️ נוהל זה מתייחס לאירוע אש/עשן שמקורו במשרדי NVIDIA – לא לאזעקת אש כללית של הבניין
+    </div>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div>גלה אש/עשן – נסה לכבות עם המטף הקרוב. אם אינך משתלט – פנה לאחור ופנה את האנשים שמסביך.</div></li>
+      <li><div class="sn sn-red">2</div><div>הפעל לחצן כיבוי ידני | הזנק כבאות: <strong>102</strong></div></li>
+      <li><div class="sn sn-red">3</div><div>הזנק RSOC: <strong>074-723-6000/3/4</strong> | אבטח NVIDIA נוטל פיקוד</div></li>
+      <li><div class="sn sn-red">4</div><div>פנה עובדים במדרגות – <strong>לא מעלית</strong> | ERT: אחרון יוצא, בודק כל חדר</div></li>
+      <li><div class="sn sn-red">5</div><div>כינוס בנקודת האיסוף | ספירת נוכחות | דיווח על חסרים</div></li>
+      <li><div class="sn sn-red">6</div><div>מנע כניסה חזרה – עד לאישור מפורש מכוחות הצלה</div></li>
+    </ul>
+  </div>
+
+  <!-- ROCKETS -->
+  <div id="rockets" class="scenario-detail" style="border-top-color:var(--orange-warn)">
+    <h3>🚀 אזעקה – ירי רקטות וטילים</h3>
+    <ul class="steps">
+      <li><div class="sn sn-orange">1</div><div>בעת שמיעת אזעקה חיצונית (2 דקות עולה-יורד) / קבלת התרעה ביישומון פיקוד העורף – <strong>היכנס מיידית לממ"ק הקרוב (קומות 6, 7 או 8)</strong></div></li>
+      <li><div class="sn sn-orange">2</div><div>סגור דלת וחלון הממ"ק | הישאר בפנים</div></li>
+      <li><div class="sn sn-orange">3</div><div>לא הספקת להגיע לממ"ק – <strong>היכנס לחדר המדרגות הקרוב</strong> ושב על הרצפה הרחק מחלונות</div></li>
+      <li><div class="sn sn-orange">4</div><div>מחוץ למבנה – <strong>שכב על האדמה ושים ידיים על הראש</strong></div></li>
+      <li><div class="sn sn-orange">5</div><div>הישאר בממ"ק עד לקבלת <strong>הודעת שחרור מפיקוד העורף</strong></div></li>
+    </ul>
+    <div style="background:#fff5e6;border-right:4px solid var(--orange-warn);padding:9px 12px;border-radius:6px;font-size:12px;margin-top:10px">
+      <strong>ממ"קים באתר:</strong> קומות <strong>6, 7 ו-8</strong> בלבד
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div id="security" class="scenario-detail" style="border-top-color:#8B0000">
+    <h3>🔫 אירוע ביטחוני / אלימות – Run · Hide · Fight</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div><strong style="color:var(--red-alert)">RUN</strong> – ברח מהאזור מיד, עזוב חפצים</div></li>
+      <li><div class="sn sn-red">2</div><div><strong style="color:var(--orange-warn)">HIDE</strong> – נעל/חסום דלת, כבה אורות, שכב. במידת האפשר – היכנס לממ"ק הקרוב.</div></li>
+      <li><div class="sn sn-red">3</div><div><strong style="color:#8B0000">FIGHT</strong> – כמוצא אחרון בלבד, בכל אמצעי</div></li>
+      <li><div class="sn sn-red">4</div><div>אבטח NVIDIA מדווח למשטרה <strong>100</strong> ולRSOC <strong>074-723-6000</strong>. מבצעים נעילת בניין.</div></li>
+      <li><div class="sn sn-red">5</div><div>אל תחלץ לבד – המתן לכוחות ביטחון</div></li>
+    </ul>
+  </div>
+
+  <!-- EARTHQUAKE -->
+  <div id="quake" class="scenario-detail" style="border-top-color:var(--blue-info)">
+    <h3>🌍 רעידת אדמה</h3>
+    <ul class="steps">
+      <li><div class="sn sn-blue">1</div><div><strong>קומות 0–2:</strong> התפנה במהירות האפשרית דרך המדרגות החוצה</div></li>
+      <li><div class="sn sn-blue">2</div><div><strong>קומות 3 ומעלה:</strong> עבור לממ"ק הקרוב (קומות 6/7/8) – השאר את הדלת <strong>פתוחה</strong> בזמן הרעידה</div></li>
+      <li><div class="sn sn-blue">3</div><div>אם אין זמן – שב תחת שולחן חזק, כסה ראש וצוואר, התרחק מחלונות</div></li>
+      <li><div class="sn sn-blue">4</div><div>לאחר הרעידה – פנה עובדים דרך המדרגות לנקודת האיסוף</div></li>
+      <li><div class="sn sn-blue">5</div><div>עדכן RSOC: <strong>074-723-6000/3/4</strong></div></li>
+      <li><div class="sn sn-blue">6</div><div>שים לב לרעידות משנה | בחוץ – הרחק מעצים וכבלי חשמל</div></li>
+      <li><div class="sn sn-blue">7</div><div><strong>אין להשתמש במעליות</strong> | אין לחזור למבנה ללא אישור</div></li>
+    </ul>
+  </div>
+
+  <!-- MEDICAL -->
+  <div id="medical" class="scenario-detail" style="border-top-color:#6B21A8">
+    <h3>🚑 חירום רפואי</h3>
+    <ul class="steps">
+      <li><div class="sn sn-purple">1</div><div>הזנק RSOC: <strong>074-723-6000/3/4</strong> – מסור שם, מיקום מדויק ומהות האירוע</div></li>
+      <li><div class="sn sn-purple">2</div><div>לאירוע מסכן חיים – גם מד"א: <strong>101</strong></div></li>
+      <li><div class="sn sn-purple">3</div><div>AED – קומת קרקע, אזור משותף – <strong>הבא מיידית</strong></div></li>
+      <li><div class="sn sn-purple">4</div><div>אבטח אזור – חסום כניסת אנשים מיותרים</div></li>
+      <li><div class="sn sn-purple">5</div><div>אל תזיז נפגע ללא הכשרה</div></li>
+      <li><div class="sn sn-purple">6</div><div>שמור עמדה בכניסה להכוון צוות מד"א</div></li>
+    </ul>
+    <div class="aed-box">
+      <div class="aed-icon">❤️‍🩹</div>
+      <div><div class="aed-title">AED – דפיברילטור</div><div class="aed-loc">קומת קרקע – אזור משותף | זמין 24/7</div></div>
+    </div>
+  </div>
+
+  <!-- HAZMAT -->
+  <div id="hazmat" class="scenario-detail" style="border-top-color:#166534">
+    <h3>☢️ חומרים מסוכנים (חמ"ס)</h3>
+    <ul class="steps">
+      <li><div class="sn sn-green">1</div><div>בודד אזור מיידית – הרחק עובדים 50+ מטר</div></li>
+      <li><div class="sn sn-green">2</div><div>אל תגע / אל תריח – זהה מרחוק אם ניתן</div></li>
+      <li><div class="sn sn-green">3</div><div>כבאות: <strong>102</strong> עם פרטי החומר אם ידוע</div></li>
+      <li><div class="sn sn-green">4</div><div>הזנק RSOC: <strong>074-723-6000/3/4</strong></div></li>
+      <li><div class="sn sn-green">5</div><div>צור קשר עם CBRE: <strong>050-216-1634</strong> ועם EHS</div></li>
+      <li><div class="sn sn-green">6</div><div>פינוי על פי צורך והחלטת מנהל האירוע</div></li>
+    </ul>
+  </div>
+
+  <!-- ASSEMBLY MAP -->
+  <div id="assembly-map" class="scenario-detail" style="border-top-color:#0d6b3a">
+    <h3>🗺️ מפת שטח הכינוס – עיגול ירוק, 13 זרחין רעננה</h3>
+    <div style="text-align:center;margin-bottom:12px">
+      <svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;border-radius:8px;border:1px solid #ddd">
+        <!-- Background -->
+        <rect width="420" height="300" fill="#e8efe8"/>
+
+        <!-- HaTa'asiya St – bottom E-W -->
+        <rect x="0" y="248" width="420" height="40" fill="#c8c8c8"/>
+        <line x1="0" y1="268" x2="420" y2="268" stroke="white" stroke-width="1.5" stroke-dasharray="16,8"/>
+        <text x="300" y="243" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#333">רח' התעשייה</text>
+
+        <!-- Zafna St – left N-S -->
+        <rect x="90" y="0" width="36" height="260" fill="#c8c8c8"/>
+        <line x1="108" y1="0" x2="108" y2="260" stroke="white" stroke-width="1.5" stroke-dasharray="16,8"/>
+        <text x="108" y="18" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#333" transform="rotate(-90,108,18) translate(-80,0)">רח' זפנה</text>
+
+        <!-- Ha-Tidhar St – right N-S -->
+        <rect x="370" y="0" width="50" height="260" fill="#c8c8c8"/>
+
+        <!-- Dafna St – top E-W -->
+        <rect x="90" y="0" width="330" height="32" fill="#c8c8c8"/>
+        <text x="260" y="22" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#333">רח' דפנה</text>
+
+        <!-- Building (C-shape) -->
+        <!-- Main body -->
+        <rect x="190" y="60" width="170" height="175" rx="3" fill="#3a5fa0"/>
+        <!-- Cutout (C opening to the west) -->
+        <rect x="190" y="110" width="85" height="75" rx="0" fill="#e8efe8"/>
+        <!-- Building labels -->
+        <text x="310" y="115" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="white">NVIDIA</text>
+        <text x="310" y="132" text-anchor="middle" font-family="Arial" font-size="10" fill="#c8d8f8">13 זרחין</text>
+        <text x="310" y="148" text-anchor="middle" font-family="Arial" font-size="9" fill="#9ab8e8">קומות 4,6,7,8</text>
+        <text x="310" y="175" text-anchor="middle" font-family="Arial" font-size="9" fill="#f8c8a8">ממ"ק: 6,7,8 ↑</text>
+
+        <!-- Entrance arrow pointing west to assembly -->
+        <defs>
+          <marker id="arrran" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#22c55e"/>
+          </marker>
+        </defs>
+        <line x1="190" y1="147" x2="165" y2="147" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrran)"/>
+
+        <!-- ASSEMBLY POINT – green circle -->
+        <circle cx="145" cy="147" r="22" fill="#22c55e" stroke="white" stroke-width="2"/>
+        <text x="145" y="143" text-anchor="middle" font-family="Arial" font-size="9" font-weight="900" fill="white">🟢</text>
+        <text x="145" y="156" text-anchor="middle" font-family="Arial" font-size="8" font-weight="900" fill="white">כינוס</text>
+
+        <!-- North arrow -->
+        <g transform="translate(388,270)">
+          <circle cx="0" cy="0" r="16" fill="white" stroke="#666" stroke-width="1"/>
+          <polygon points="0,-11 -4,3 0,1 4,3" fill="#333"/>
+          <text x="0" y="12" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#333">N</text>
+        </g>
+
+        <!-- Street labels -->
+        <text x="395" y="140" text-anchor="middle" font-family="Arial" font-size="9" fill="#555" transform="rotate(90,395,140)">הר-תדהר</text>
+      </svg>
+    </div>
+    <div style="background:#f0faf5;border-right:4px solid #0d6b3a;padding:10px 12px;border-radius:6px;font-size:13px;margin-bottom:12px;line-height:1.7">
+      <strong>📍 מיקום:</strong> עיגול ירוק – מערבית לכניסת הבניין, 13 זרחין, רעננה<br>
+      <strong>⚠️ שים לב:</strong> אין לחסום גישת כבאיות ואמבולנסים לכניסת הבניין<br>
+      <strong>🟢 סימון בשטח:</strong> שלט "עיגול ירוק" מסומן בכל מפות הפינוי שבבניין
+    </div>
+    <a href="https://www.google.com/maps/search/?api=1&query=13+Zarhin+St+Raanana+Israel" target="_blank"
+      style="display:inline-flex;align-items:center;gap:8px;background:#0d6b3a;color:white;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+      📍 פתח ב-Google Maps
+    </a>
+  </div>
+
+  <!-- ROLES -->
+  <div class="section-title"><span>👥</span> תפקידים בחירום</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body" style="padding:0">
+      <table class="roles-table">
+        <thead>
+          <tr><th style="width:28%">תפקיד</th><th style="width:24%">גוף / אדם</th><th>אחריות עיקרית</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rn">אבטח NVIDIA (IC ראשוני)</td>
+            <td>מוקד אמון<br>054-8292120</td>
+            <td>נוטל פיקוד עד הגעת מנהל ביטחון – מוביל לנקודת האיסוף, שמירת פרימטר, הגבלת כניסה חוזרת</td>
+          </tr>
+          <tr>
+            <td class="rn">ERT</td>
+            <td>NVIDIA</td>
+            <td>אוסף ציוד מארון חירום, סריקת קומות, הנחיית עובדים, ספירת נוכחות בנקודת האיסוף</td>
+          </tr>
+          <tr>
+            <td class="rn">מנהל ביטחון</td>
+            <td>ירין וקנין</td>
+            <td>מנהל אירוע בכיר – תיאום עם RSOC, קבלת החלטות, אישור חזרה לבניין</td>
+          </tr>
+          <tr>
+            <td class="rn">שומר לובי B</td>
+            <td>052-5999729</td>
+            <td>נוכחות פיזית בלובי – סיוע לאבטח NVIDIA בשליטת כניסה ופינוי</td>
+          </tr>
+          <tr>
+            <td class="rn">מנהל בניין</td>
+            <td>עוז ברקוביץ'<br>054-525-3637</td>
+            <td>מערכות בניין (אש/חשמל/מעליות), ממשק עם כוחות הצלה</td>
+          </tr>
+          <tr>
+            <td class="rn">CBRE מתקנים</td>
+            <td>חנן יסרוף<br>050-216-1634</td>
+            <td>קבלן מתקנים – חשמל, נעילה, צנרת, קבלן כללי</td>
+          </tr>
+          <tr>
+            <td class="rn">RSOC</td>
+            <td>NVIDIA 24/7<br>074-723-6000/3/4</td>
+            <td>ניטור 24/7, קבלת דיווחים, הפעלת ERT, תיאום עם משטרה/כבאות/מד"א, Everbridge</td>
+          </tr>
+          <tr>
+            <td class="rn">מנהלי צוות</td>
+            <td>NVIDIA</td>
+            <td>ספירת עובדים ישירים בנקודת האיסוף, דיווח על חסרים לאחמ"ש</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="section-title"><span>🧰</span> ציוד חירום</div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header bg-red"><span>❤️‍🩹</span> AED</div>
+      <div class="card-body" style="font-size:13px">קומת קרקע – אזור משותף<br>זמין 24/7</div>
+    </div>
+    <div class="card">
+      <div class="card-header bg-blue"><span>🎒</span> ארון חירום ERT</div>
+      <div class="card-body" style="font-size:13px">
+        אפוד + משרוקית + רדיו<br>
+        עזרה ראשונה + פנס + מגפון<br>
+        שמיכת אש + אלונקה + מוט
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header bg-dark"><span>🔌</span> מערכות בניין</div>
+      <div class="card-body" style="font-size:13px">
+        ספרינקלרים + גלאי עשן בכל הקומות<br>
+        לחצני כיבוי ידניים בכל קומה<br>
+        <span style="color:#888;font-size:11px">AFCon – 03-959-2541</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    NVIDIA Israel | 13 זרחין, רעננה | SOP חירום ופינוי | גרסה יוני 2026 | SOP-IL-RAN-001<br>
+    מסמך פנימי לשימוש תפעולי – לביטחון, ERT ו-CBRE בלבד
+  </div>
+
+</div>
+
+<script>
+var activeId = null;
+function showScenario(id, cardEl) {
+  document.querySelectorAll('.scenario-detail').forEach(function(d){ d.classList.remove('active'); });
+  document.querySelectorAll('.scenario-card').forEach(function(c){ c.classList.remove('active'); });
+  if (activeId === id) { activeId = null; return; }
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    cardEl.classList.add('active');
+    activeId = id;
+    setTimeout(function(){ el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+  }
+}
+</script>
+</body>
+</html>

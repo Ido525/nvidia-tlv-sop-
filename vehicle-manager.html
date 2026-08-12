@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ניהול רכבי הבית</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3352;
+    --accent: #4f7cff;
+    --accent2: #7c4fff;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --radius: 12px;
+  }
+  body.light {
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --surface2: #f8fafc;
+    --border: #e2e8f0;
+    --accent: #3b66e8;
+    --text: #0f172a;
+    --text2: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* Layout */
+  .app { display: flex; height: 100vh; }
+  .sidebar { width: 220px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .main { flex: 1; overflow-y: auto; padding: 28px; }
+
+  /* Sidebar */
+  .logo { padding: 24px 20px 16px; font-size: 1.1rem; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 20px; cursor: pointer; color: var(--text2); transition: all .15s; font-size: .92rem; }
+  .nav-item:hover, .nav-item.active { background: var(--surface2); color: var(--text); }
+  .nav-item.active { border-right: 3px solid var(--accent); }
+  .nav-icon { font-size: 1.1rem; width: 20px; text-align: center; }
+  .nav-badge { margin-right: auto; background: var(--red); color: white; border-radius: 10px; padding: 1px 7px; font-size: .72rem; font-weight: 700; }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .card-title { font-size: .8rem; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+  .card-value { font-size: 1.8rem; font-weight: 700; }
+
+  /* Section header */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .section-title { font-size: 1.3rem; font-weight: 700; }
+
+  /* Buttons */
+  .btn { padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: .88rem; font-weight: 600; transition: all .15s; }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #3a65e0; }
+  .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+  .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+  .btn-danger:hover { background: var(--red); color: white; }
+  .btn-sm { padding: 5px 12px; font-size: .8rem; }
+  .btn-icon { padding: 6px 10px; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  /* Alert chips */
+  .chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: .78rem; font-weight: 600; }
+  .chip-red { background: rgba(239,68,68,.15); color: var(--red); }
+  .chip-yellow { background: rgba(234,179,8,.15); color: var(--yellow); }
+  .chip-green { background: rgba(34,197,94,.15); color: var(--green); }
+  .chip-blue { background: rgba(79,124,255,.15); color: var(--accent); }
+
+  /* Table */
+  .table { width: 100%; border-collapse: collapse; }
+  .table th { text-align: right; padding: 10px 14px; font-size: .78rem; color: var(--text2); font-weight: 600; border-bottom: 1px solid var(--border); }
+  .table td { padding: 12px 14px; font-size: .88rem; border-bottom: 1px solid var(--border); }
+  .table tr:last-child td { border-bottom: none; }
+  .table tr:hover td { background: var(--surface2); }
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+
+  /* Alert list */
+  .alert-item { display: flex; align-items: center; gap: 14px; padding: 14px; border-bottom: 1px solid var(--border); }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .alert-icon-red { background: rgba(239,68,68,.15); }
+  .alert-icon-yellow { background: rgba(234,179,8,.15); }
+  .alert-icon-blue { background: rgba(79,124,255,.15); }
+  .alert-text { flex: 1; }
+  .alert-title { font-size: .9rem; font-weight: 600; }
+  .alert-sub { font-size: .78rem; color: var(--text2); margin-top: 2px; }
+  .alert-days { font-size: .82rem; font-weight: 700; }
+
+  /* Vehicle card */
+  .vehicle-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .vehicle-card-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .vehicle-emoji { font-size: 2rem; }
+  .vehicle-name { font-size: 1.05rem; font-weight: 700; }
+  .vehicle-plate { font-size: .82rem; color: var(--text2); margin-top: 2px; font-family: monospace; }
+  .vehicle-card-body { padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .vehicle-stat { }
+  .vehicle-stat-label { font-size: .72rem; color: var(--text2); margin-bottom: 3px; }
+  .vehicle-stat-value { font-size: .9rem; font-weight: 600; }
+  .vehicle-card-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+
+  /* Form */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 560px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+  .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 1.1rem; font-weight: 700; }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: .82rem; color: var(--text2); margin-bottom: 6px; font-weight: 600; }
+  .form-control { width: 100%; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: .9rem; outline: none; transition: border-color .15s; }
+  .form-control:focus { border-color: var(--accent); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .section-divider { font-size: .78rem; color: var(--text2); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 12px 0 6px; border-top: 1px solid var(--border); margin-top: 8px; }
+
+  /* Expense list */
+  .expense-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .expense-row:last-child { border-bottom: none; }
+  .expense-cat { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+  .expense-info { flex: 1; }
+  .expense-desc { font-size: .88rem; font-weight: 600; }
+  .expense-meta { font-size: .75rem; color: var(--text2); margin-top: 2px; }
+  .expense-amount { font-size: .95rem; font-weight: 700; color: var(--text); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; background: var(--surface2); padding: 4px; border-radius: 10px; margin-bottom: 20px; }
+  .tab { flex: 1; padding: 8px 14px; border-radius: 7px; border: none; background: transparent; color: var(--text2); cursor: pointer; font-size: .85rem; font-weight: 600; transition: all .15s; }
+  .tab.active { background: var(--surface); color: var(--text); }
+
+  /* Drive sync bar */
+  .drive-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 24px; display: flex; align-items: center; gap: 12px; font-size: .82rem; color: var(--text2); flex-shrink: 0; }
+  .drive-bar .drive-actions { display: flex; gap: 8px; margin-right: auto; align-items: center; }
+  .drive-status { display: flex; align-items: center; gap: 6px; }
+  .drive-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 48px 24px; color: var(--text2); }
+  .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-text { font-size: .9rem; }
+
+  /* Summary bar */
+  .summary-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+  .summary-item { flex: 1; min-width: 140px; }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;height:100vh">
+<!-- Drive sync bar -->
+<div class="drive-bar">
+  <span>🗂️ <strong>Drive Sync</strong></span>
+  <div class="drive-status"><div class="drive-dot" id="sync-dot" style="background:var(--text2)"></div><span id="sync-status">לא מסונכרן</span></div>
+  <span id="sync-time" style="font-size:.76rem"></span>
+  <div class="drive-actions">
+    <button class="btn btn-ghost btn-sm" onclick="exportToFile()" title="הורד קובץ JSON לשמירה ב-Drive">⬇️ ייצוא ל-Drive</button>
+    <button class="btn btn-ghost btn-sm" onclick="importFromFile()" title="טען קובץ JSON מ-Drive">⬆️ ייבוא מ-Drive</button>
+    <button class="btn btn-primary btn-sm" onclick="copyToClipboard()" title="העתק JSON ללוח">📋 העתק נתונים</button>
+    <button class="btn btn-ghost btn-sm" onclick="toggleTheme()" id="theme-btn" title="החלף ערכת נושא">🌙</button>
+  </div>
+</div>
+<input type="file" id="file-input" accept=".json" style="display:none" onchange="handleFileImport(event)">
+
+<div class="app">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="logo">🚗 רכבי הבית</div>
+    <div class="nav-item active" onclick="showView('dashboard')" id="nav-dashboard">
+      <span class="nav-icon">🏠</span> דשבורד
+      <span class="nav-badge" id="badge-alerts" style="display:none">0</span>
+    </div>
+    <div class="nav-item" onclick="showView('vehicles')" id="nav-vehicles">
+      <span class="nav-icon">🚗</span> רכבים
+    </div>
+    <div class="nav-item" onclick="showView('insurance')" id="nav-insurance">
+      <span class="nav-icon">🛡️</span> ביטוח
+    </div>
+    <div class="nav-item" onclick="showView('license')" id="nav-license">
+      <span class="nav-icon">📋</span> רישוי
+    </div>
+    <div class="nav-item" onclick="showView('garage')" id="nav-garage">
+      <span class="nav-icon">🔧</span> מוסך
+    </div>
+    <div class="nav-item" onclick="showView('expenses')" id="nav-expenses">
+      <span class="nav-icon">💰</span> הוצאות
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main" id="main-content"></main>
+</div>
+</div>
+
+<!-- Modal container -->
+<div id="modal-container"></div>
+
+<script>
+// ==================== DATA STORE ====================
+const STORE_KEY = 'vehicle_mgr_v1';
+
+function loadData() {
+  try {
+    const d = localStorage.getItem(STORE_KEY);
+    if (d) return JSON.parse(d);
+  } catch(e) {}
+  return { vehicles: [], insurance: [], licenses: [], garage: [], expenses: [] };
+}
+
+function saveData(data) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+}
+
+let data = loadData();
+
+// Seed demo data if empty
+if (data.vehicles.length === 0) {
+  const today = new Date();
+  const d = (months) => {
+    const dt = new Date(today);
+    dt.setMonth(dt.getMonth() + months);
+    return dt.toISOString().split('T')[0];
+  };
+  data.vehicles = [
+    { id: 'v1', name: 'טויוטה קורולה', plate: '123-45-678', year: 2019, color: 'לבן', km: 87000, emoji: '🚗', note: '' },
+    { id: 'v2', name: 'מאזדה CX-5', plate: '234-56-789', year: 2021, color: 'שחור', km: 42000, emoji: '🚙', note: '' },
+    { id: 'v3', name: 'יונדאי i10', plate: '345-67-890', year: 2017, color: 'אדום', km: 110000, emoji: '🚕', note: 'רכב של הילדים' },
+  ];
+  data.insurance = [
+    { id: 'i1', vehicleId: 'v1', company: 'מגדל', type: 'מקיף', policyNum: 'POL-001-2024', startDate: d(-10), endDate: d(2), monthlyPremium: 380, note: '' },
+    { id: 'i2', vehicleId: 'v2', company: 'הראל', type: 'מקיף', policyNum: 'POL-002-2024', startDate: d(-2), endDate: d(10), monthlyPremium: 450, note: '' },
+    { id: 'i3', vehicleId: 'v3', company: 'כלל', type: 'חובה בלבד', policyNum: 'POL-003-2024', startDate: d(-1), endDate: d(1), monthlyPremium: 150, note: '' },
+  ];
+  data.licenses = [
+    { id: 'l1', vehicleId: 'v1', expiry: d(3), lastTest: d(-9), note: '' },
+    { id: 'l2', vehicleId: 'v2', expiry: d(8), lastTest: d(-4), note: '' },
+    { id: 'l3', vehicleId: 'v3', expiry: d(0.5), lastTest: d(-11), note: 'יש תיקון רשום בטסט' },
+  ];
+  data.garage = [
+    { id: 'g1', vehicleId: 'v1', date: d(-3), garageName: 'מוסך כרמי', desc: 'החלפת שמן + פילטרים', cost: 380, km: 86000, nextKm: 96000, nextDate: d(9), note: '' },
+    { id: 'g2', vehicleId: 'v2', date: d(-1), garageName: 'סיטי מוסך', desc: 'בלמים קדמיים', cost: 1200, km: 41500, nextKm: null, nextDate: null, note: '' },
+    { id: 'g3', vehicleId: 'v3', date: d(-6), garageName: 'מוסך כרמי', desc: 'החלפת שמן ובדיקה שנתית', cost: 500, km: 109000, nextKm: 119000, nextDate: d(6), note: '' },
+  ];
+  data.expenses = [
+    { id: 'e1', vehicleId: 'v1', date: d(-1), category: 'דלק', amount: 250, desc: 'תדלוק', note: '' },
+    { id: 'e2', vehicleId: 'v1', date: d(-2), category: 'ביטוח', amount: 380, desc: 'פרמיה חודשית', note: '' },
+    { id: 'e3', vehicleId: 'v2', date: d(-0.5), category: 'דלק', amount: 310, desc: 'תדלוק', note: '' },
+    { id: 'e4', vehicleId: 'v2', date: d(-1), category: 'ביטוח', amount: 450, desc: 'פרמיה חודשית', note: '' },
+    { id: 'e5', vehicleId: 'v3', date: d(-3), category: 'מוסך', amount: 500, desc: 'שמן + בדיקה', note: '' },
+    { id: 'e6', vehicleId: 'v3', date: d(-1), category: 'ביטוח', amount: 150, desc: 'פרמיה חודשית', note: '' },
+  ];
+  saveData(data);
+}
+
+// ==================== HELPERS ====================
+function getVehicle(id) { return data.vehicles.find(v => v.id === id); }
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const diff = new Date(dateStr) - new Date(new Date().toDateString());
+  return Math.round(diff / 86400000);
+}
+function formatDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('he-IL');
+}
+function formatMoney(n) {
+  return '₪' + Number(n).toLocaleString('he-IL');
+}
+function uid() { return 'id' + Date.now() + Math.random().toString(36).slice(2); }
+function statusChip(days, labelExpired, labelSoon, labelOk) {
+  if (days === null) return '<span class="chip chip-blue">לא ידוע</span>';
+  if (days < 0) return `<span class="chip chip-red">⛔ ${labelExpired}</span>`;
+  if (days <= 30) return `<span class="chip chip-red">⚠️ ${days} ימים</span>`;
+  if (days <= 60) return `<span class="chip chip-yellow">⚠️ ${days} ימים</span>`;
+  return `<span class="chip chip-green">✓ ${labelOk}</span>`;
+}
+
+// ==================== ALERTS ====================
+function getAlerts() {
+  const alerts = [];
+  data.insurance.forEach(ins => {
+    const v = getVehicle(ins.vehicleId);
+    if (!v) return;
+    const days = daysUntil(ins.endDate);
+    if (days !== null && days <= 60) {
+      alerts.push({ type: days < 0 ? 'red' : days <= 30 ? 'red' : 'yellow', icon: '🛡️', title: `ביטוח ${v.name}`, sub: `${ins.company} · ${ins.type}`, days, date: ins.endDate, cat: 'insurance' });
+    }
+  });
+  data.licenses.forEach(lic => {
+    const v = getVehicle(lic.vehicleId);
+    if (!v) return;
+    const days = daysUntil(lic.expiry);
+    if (days !== null && days <= 60) {
+      alerts.push({ type: days < 0 ? 'red' : days <= 30 ? 'red' : 'yellow', icon: '📋', title: `רישיון רכב ${v.name}`, sub: `פג תוקף: ${formatDate(lic.expiry)}`, days, date: lic.expiry, cat: 'license' });
+    }
+  });
+  data.garage.forEach(g => {
+    const v = getVehicle(g.vehicleId);
+    if (!v) return;
+    if (g.nextDate) {
+      const days = daysUntil(g.nextDate);
+      if (days !== null && days <= 60) {
+        alerts.push({ type: days < 0 ? 'red' : days <= 30 ? 'yellow' : 'blue', icon: '🔧', title: `טיפול תקופתי ${v.name}`, sub: `${g.garageName} · ${formatDate(g.nextDate)}`, days, date: g.nextDate, cat: 'garage' });
+      }
+    }
+    if (g.nextKm && v.km) {
+      const kmLeft = g.nextKm - v.km;
+      if (kmLeft <= 1500) {
+        alerts.push({ type: kmLeft < 0 ? 'red' : 'yellow', icon: '🔧', title: `ק"מ לטיפול ${v.name}`, sub: `נדרש ב-${g.nextKm.toLocaleString()} ק"מ (נוכחי: ${v.km.toLocaleString()})`, days: null, kmLeft, cat: 'garage' });
+      }
+    }
+  });
+  return alerts.sort((a, b) => (a.days ?? 0) - (b.days ?? 0));
+}
+
+// ==================== VIEWS ====================
+let currentView = 'dashboard';
+
+function showView(view) {
+  currentView = view;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-' + view)?.classList.add('active');
+  const main = document.getElementById('main-content');
+  switch (view) {
+    case 'dashboard': main.innerHTML = renderDashboard(); break;
+    case 'vehicles': main.innerHTML = renderVehicles(); break;
+    case 'insurance': main.innerHTML = renderInsurance(); break;
+    case 'license': main.innerHTML = renderLicense(); break;
+    case 'garage': main.innerHTML = renderGarage(); break;
+    case 'expenses': main.innerHTML = renderExpenses(); break;
+  }
+  updateBadge();
+}
+
+function updateBadge() {
+  const alerts = getAlerts().filter(a => a.type === 'red' || (a.days !== null && a.days <= 30));
+  const badge = document.getElementById('badge-alerts');
+  if (!badge) return;
+  if (alerts.length > 0) { badge.textContent = alerts.length; badge.style.display = ''; }
+  else badge.style.display = 'none';
+}
+
+// ==================== DASHBOARD ====================
+function renderDashboard() {
+  const alerts = getAlerts();
+  const urgentCount = alerts.filter(a => a.type === 'red').length;
+  const warnCount = alerts.filter(a => a.type === 'yellow').length;
+  const totalExpenses = data.expenses.reduce((s, e) => s + Number(e.amount), 0);
+  const thisMonth = new Date().toISOString().slice(0, 7);
+  const monthExpenses = data.expenses.filter(e => e.date && e.date.startsWith(thisMonth)).reduce((s, e) => s + Number(e.amount), 0);
+
+  return `
+    <div class="section-header"><h2 class="section-title">דשבורד</h2></div>
+    <div class="summary-bar">
+      <div class="summary-item card">
+        <div class="card-title">רכבים</div>
+        <div class="card-value">${data.vehicles.length}</div>
+      </div>
+      <div class="summary-item card">
+        <div class="card-title">התראות דחופות</div>
+        <div class="card-value" style="color:${urgentCount>0?'var(--red)':'var(--green)'}">${urgentCount}</div>
+      </div>
+      <div class="summary-item card">
+        <div class="card-title">אזהרות</div>
+        <div class="card-value" style="color:${warnCount>0?'var(--yellow)':'var(--green)'}">${warnCount}</div>
+      </div>
+      <div class="summary-item card">
+        <div class="card-title">הוצאות החודש</div>
+        <div class="card-value" style="font-size:1.4rem">${formatMoney(monthExpenses)}</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="gap:20px">
+      <div>
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:12px">⚠️ התראות ותזכורות (${alerts.length})</h3>
+        <div class="card" style="padding:0;overflow:hidden">
+          ${alerts.length === 0 ? `<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">אין התראות פעילות</div></div>` :
+            alerts.map(a => `
+              <div class="alert-item">
+                <div class="alert-icon alert-icon-${a.type}"><span>${a.icon}</span></div>
+                <div class="alert-text">
+                  <div class="alert-title">${a.title}</div>
+                  <div class="alert-sub">${a.sub}</div>
+                </div>
+                <div class="alert-days" style="color:var(--${a.type === 'blue' ? 'accent' : a.type})">
+                  ${a.days !== null ? (a.days < 0 ? 'פג תוקף' : a.days + ' ימים') : (a.kmLeft !== undefined ? a.kmLeft + ' ק"מ' : '')}
+                </div>
+              </div>
+            `).join('')}
+        </div>
+      </div>
+
+      <div>
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:12px">🚗 רכבים</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          ${data.vehicles.map(v => {
+            const ins = data.insurance.find(i => i.vehicleId === v.id);
+            const lic = data.licenses.find(l => l.vehicleId === v.id);
+            const insDays = ins ? daysUntil(ins.endDate) : null;
+            const licDays = lic ? daysUntil(lic.expiry) : null;
+            return `
+              <div class="card" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer" onclick="showView('vehicles')">
+                <span style="font-size:1.8rem">${v.emoji}</span>
+                <div style="flex:1">
+                  <div style="font-weight:700">${v.name}</div>
+                  <div style="font-size:.78rem;color:var(--text2);font-family:monospace">${v.plate}</div>
+                </div>
+                <div style="display:flex;gap:6px;flex-direction:column;align-items:flex-end">
+                  ${statusChip(insDays, 'ביטוח פג', '', 'ביטוח תקין')}
+                  ${statusChip(licDays, 'רישיון פג', '', 'רישיון תקין')}
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px">
+      <h3 style="font-size:.95rem;font-weight:700;margin-bottom:12px">💸 הוצאות אחרונות</h3>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>תאריך</th><th>רכב</th><th>קטגוריה</th><th>תיאור</th><th>סכום</th></tr></thead>
+          <tbody>
+            ${data.expenses.slice(-6).reverse().map(e => {
+              const v = getVehicle(e.vehicleId);
+              return `<tr><td>${formatDate(e.date)}</td><td>${v ? v.emoji + ' ' + v.name : '—'}</td><td>${e.category}</td><td>${e.desc}</td><td style="font-weight:700">${formatMoney(e.amount)}</td></tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ==================== VEHICLES ====================
+function renderVehicles() {
+  return `
+    <div class="section-header">
+      <h2 class="section-title">🚗 רכבים</h2>
+      <button class="btn btn-primary" onclick="openVehicleModal()">+ הוסף רכב</button>
+    </div>
+    ${data.vehicles.length === 0 ? `<div class="empty card"><div class="empty-icon">🚗</div><div class="empty-text">לא נוספו רכבים עדיין</div></div>` :
+      `<div class="grid-3">${data.vehicles.map(v => renderVehicleCard(v)).join('')}</div>`}
+  `;
+}
+
+function renderVehicleCard(v) {
+  const ins = data.insurance.find(i => i.vehicleId === v.id);
+  const lic = data.licenses.find(l => l.vehicleId === v.id);
+  const lastGarage = data.garage.filter(g => g.vehicleId === v.id).sort((a,b) => b.date.localeCompare(a.date))[0];
+  const insDays = ins ? daysUntil(ins.endDate) : null;
+  const licDays = lic ? daysUntil(lic.expiry) : null;
+
+  return `
+    <div class="vehicle-card">
+      <div class="vehicle-card-header">
+        <span class="vehicle-emoji">${v.emoji}</span>
+        <div>
+          <div class="vehicle-name">${v.name}</div>
+          <div class="vehicle-plate">${v.plate}</div>
+        </div>
+      </div>
+      <div class="vehicle-card-body">
+        <div class="vehicle-stat"><div class="vehicle-stat-label">שנת ייצור</div><div class="vehicle-stat-value">${v.year}</div></div>
+        <div class="vehicle-stat"><div class="vehicle-stat-label">צבע</div><div class="vehicle-stat-value">${v.color}</div></div>
+        <div class="vehicle-stat"><div class="vehicle-stat-label">ק"מ נוכחי</div><div class="vehicle-stat-value">${v.km ? v.km.toLocaleString() : '—'}</div></div>
+        <div class="vehicle-stat"><div class="vehicle-stat-label">מוסך אחרון</div><div class="vehicle-stat-value" style="font-size:.8rem">${lastGarage ? formatDate(lastGarage.date) : '—'}</div></div>
+      </div>
+      <div style="padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border)">
+        ${statusChip(insDays, 'ביטוח פג', '', 'ביטוח תקין')}
+        ${statusChip(licDays, 'רישיון פג', '', 'רישיון תקין')}
+      </div>
+      ${v.note ? `<div style="padding:0 20px 12px;font-size:.78rem;color:var(--text2)">${v.note}</div>` : ''}
+      <div class="vehicle-card-footer">
+        <button class="btn btn-ghost btn-sm" onclick="openVehicleModal('${v.id}')">✏️ עריכה</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteVehicle('${v.id}')">🗑️ מחק</button>
+      </div>
+    </div>`;
+}
+
+// ==================== INSURANCE ====================
+function renderInsurance() {
+  return `
+    <div class="section-header">
+      <h2 class="section-title">🛡️ ביטוח</h2>
+      <button class="btn btn-primary" onclick="openInsuranceModal()">+ הוסף ביטוח</button>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>רכב</th><th>חברה</th><th>סוג</th><th>מספר פוליסה</th><th>תחילה</th><th>סיום</th><th>פרמיה/חודש</th><th>סטטוס</th><th></th></tr></thead>
+        <tbody>
+          ${data.insurance.length === 0 ? `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text2)">לא נוספו ביטוחים</td></tr>` :
+            data.insurance.map(ins => {
+              const v = getVehicle(ins.vehicleId);
+              const days = daysUntil(ins.endDate);
+              return `<tr>
+                <td>${v ? v.emoji + ' ' + v.name : '—'}</td>
+                <td>${ins.company}</td>
+                <td>${ins.type}</td>
+                <td style="font-family:monospace;font-size:.82rem">${ins.policyNum}</td>
+                <td>${formatDate(ins.startDate)}</td>
+                <td>${formatDate(ins.endDate)}</td>
+                <td>${ins.monthlyPremium ? formatMoney(ins.monthlyPremium) : '—'}</td>
+                <td>${statusChip(days, 'פג תוקף', '', 'תקין')}</td>
+                <td><button class="btn btn-ghost btn-sm btn-icon" onclick="openInsuranceModal('${ins.id}')">✏️</button>
+                    <button class="btn btn-danger btn-sm btn-icon" onclick="deleteItem('insurance','${ins.id}')">🗑️</button></td>
+              </tr>`;
+            }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ==================== LICENSE ====================
+function renderLicense() {
+  return `
+    <div class="section-header">
+      <h2 class="section-title">📋 רישוי רכב</h2>
+      <button class="btn btn-primary" onclick="openLicenseModal()">+ הוסף רישוי</button>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>רכב</th><th>תוקף עד</th><th>טסט אחרון</th><th>הערות</th><th>סטטוס</th><th></th></tr></thead>
+        <tbody>
+          ${data.licenses.length === 0 ? `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text2)">לא נוסף רישוי</td></tr>` :
+            data.licenses.map(lic => {
+              const v = getVehicle(lic.vehicleId);
+              const days = daysUntil(lic.expiry);
+              return `<tr>
+                <td>${v ? v.emoji + ' ' + v.name : '—'}</td>
+                <td>${formatDate(lic.expiry)}</td>
+                <td>${formatDate(lic.lastTest)}</td>
+                <td style="font-size:.82rem;color:var(--text2)">${lic.note || '—'}</td>
+                <td>${statusChip(days, 'פג תוקף', '', 'תקין')}</td>
+                <td><button class="btn btn-ghost btn-sm btn-icon" onclick="openLicenseModal('${lic.id}')">✏️</button>
+                    <button class="btn btn-danger btn-sm btn-icon" onclick="deleteItem('licenses','${lic.id}')">🗑️</button></td>
+              </tr>`;
+            }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ==================== GARAGE ====================
+function renderGarage() {
+  return `
+    <div class="section-header">
+      <h2 class="section-title">🔧 מוסך וטיפולים</h2>
+      <button class="btn btn-primary" onclick="openGarageModal()">+ הוסף טיפול</button>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>רכב</th><th>תאריך</th><th>מוסך</th><th>תיאור</th><th>עלות</th><th>ק"מ</th><th>טיפול הבא</th><th></th></tr></thead>
+        <tbody>
+          ${data.garage.length === 0 ? `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text2)">לא נוספו טיפולים</td></tr>` :
+            [...data.garage].sort((a,b) => b.date.localeCompare(a.date)).map(g => {
+              const v = getVehicle(g.vehicleId);
+              const nextDays = g.nextDate ? daysUntil(g.nextDate) : null;
+              return `<tr>
+                <td>${v ? v.emoji + ' ' + v.name : '—'}</td>
+                <td>${formatDate(g.date)}</td>
+                <td>${g.garageName}</td>
+                <td>${g.desc}</td>
+                <td>${g.cost ? formatMoney(g.cost) : '—'}</td>
+                <td>${g.km ? g.km.toLocaleString() : '—'}</td>
+                <td>
+                  ${g.nextDate ? `<div style="font-size:.82rem">${formatDate(g.nextDate)}</div>` : ''}
+                  ${g.nextKm ? `<div style="font-size:.78rem;color:var(--text2)">${g.nextKm.toLocaleString()} ק"מ</div>` : ''}
+                  ${!g.nextDate && !g.nextKm ? '—' : ''}
+                  ${nextDays !== null && nextDays <= 30 ? `<span class="chip chip-yellow" style="margin-top:4px">⚠️ ${nextDays} ימים</span>` : ''}
+                </td>
+                <td><button class="btn btn-ghost btn-sm btn-icon" onclick="openGarageModal('${g.id}')">✏️</button>
+                    <button class="btn btn-danger btn-sm btn-icon" onclick="deleteItem('garage','${g.id}')">🗑️</button></td>
+              </tr>`;
+            }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ==================== EXPENSES ====================
+function renderExpenses() {
+  const total = data.expenses.reduce((s, e) => s + Number(e.amount), 0);
+  const byCat = {};
+  data.expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + Number(e.amount); });
+  const byVehicle = {};
+  data.expenses.forEach(e => {
+    const v = getVehicle(e.vehicleId);
+    const name = v ? v.name : 'לא ידוע';
+    byVehicle[name] = (byVehicle[name] || 0) + Number(e.amount);
+  });
+  const catEmojis = { 'דלק': '⛽', 'ביטוח': '🛡️', 'מוסך': '🔧', 'רישוי': '📋', 'חניה': '🅿️', 'קנסות': '🚨', 'אחר': '📦' };
+
+  return `
+    <div class="section-header">
+      <h2 class="section-title">💰 הוצאות</h2>
+      <button class="btn btn-primary" onclick="openExpenseModal()">+ הוסף הוצאה</button>
+    </div>
+
+    <div class="grid-3" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-title">סה"כ הוצאות</div>
+        <div class="card-value" style="font-size:1.5rem">${formatMoney(total)}</div>
+      </div>
+      <div class="card">
+        <div class="card-title">לפי קטגוריה</div>
+        ${Object.entries(byCat).map(([k,v]) => `
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:.85rem">
+            <span>${(catEmojis[k]||'📦')} ${k}</span>
+            <span style="font-weight:700">${formatMoney(v)}</span>
+          </div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="card-title">לפי רכב</div>
+        ${Object.entries(byVehicle).map(([k,v]) => `
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:.85rem">
+            <span>${k}</span>
+            <span style="font-weight:700">${formatMoney(v)}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>תאריך</th><th>רכב</th><th>קטגוריה</th><th>תיאור</th><th>סכום</th><th>הערות</th><th></th></tr></thead>
+        <tbody>
+          ${data.expenses.length === 0 ? `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text2)">לא נוספו הוצאות</td></tr>` :
+            [...data.expenses].sort((a,b) => b.date.localeCompare(a.date)).map(e => {
+              const v = getVehicle(e.vehicleId);
+              return `<tr>
+                <td>${formatDate(e.date)}</td>
+                <td>${v ? v.emoji + ' ' + v.name : '—'}</td>
+                <td>${(catEmojis[e.category]||'📦')} ${e.category}</td>
+                <td>${e.desc}</td>
+                <td style="font-weight:700">${formatMoney(e.amount)}</td>
+                <td style="font-size:.8rem;color:var(--text2)">${e.note || ''}</td>
+                <td><button class="btn btn-ghost btn-sm btn-icon" onclick="openExpenseModal('${e.id}')">✏️</button>
+                    <button class="btn btn-danger btn-sm btn-icon" onclick="deleteItem('expenses','${e.id}')">🗑️</button></td>
+              </tr>`;
+            }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ==================== MODALS ====================
+function vehicleOptions(selectedId) {
+  return data.vehicles.map(v => `<option value="${v.id}" ${v.id === selectedId ? 'selected' : ''}>${v.emoji} ${v.name}</option>`).join('');
+}
+
+function openVehicleModal(id) {
+  const v = id ? data.vehicles.find(x => x.id === id) : null;
+  showModal(`${v ? 'עריכת' : 'הוספת'} רכב`, `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">שם / דגם *</label><input class="form-control" id="f-name" value="${v?.name||''}" placeholder="טויוטה קורולה"></div>
+      <div class="form-group"><label class="form-label">לוחית רישוי *</label><input class="form-control" id="f-plate" value="${v?.plate||''}" placeholder="123-45-678"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">שנת ייצור</label><input class="form-control" id="f-year" type="number" value="${v?.year||''}" placeholder="2020"></div>
+      <div class="form-group"><label class="form-label">צבע</label><input class="form-control" id="f-color" value="${v?.color||''}" placeholder="לבן"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">ק"מ נוכחי</label><input class="form-control" id="f-km" type="number" value="${v?.km||''}" placeholder="50000"></div>
+      <div class="form-group"><label class="form-label">אימוג'י</label>
+        <select class="form-control" id="f-emoji">
+          ${['🚗','🚙','🚕','🚌','🚐','🏎️','🛻'].map(e => `<option value="${e}" ${(v?.emoji||'🚗')===e?'selected':''}>${e}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">הערות</label><input class="form-control" id="f-note" value="${v?.note||''}" placeholder="הערות חופשיות"></div>
+  `, () => {
+    const name = document.getElementById('f-name').value.trim();
+    const plate = document.getElementById('f-plate').value.trim();
+    if (!name || !plate) { alert('שם ולוחית רישוי הם שדות חובה'); return false; }
+    const obj = { id: id || uid(), name, plate, year: +document.getElementById('f-year').value||null, color: document.getElementById('f-color').value, km: +document.getElementById('f-km').value||null, emoji: document.getElementById('f-emoji').value, note: document.getElementById('f-note').value };
+    if (id) { const i = data.vehicles.findIndex(x => x.id === id); data.vehicles[i] = obj; }
+    else data.vehicles.push(obj);
+    saveData(data); closeModal(); showView('vehicles');
+  });
+}
+
+function openInsuranceModal(id) {
+  const ins = id ? data.insurance.find(x => x.id === id) : null;
+  showModal(`${ins ? 'עריכת' : 'הוספת'} ביטוח`, `
+    <div class="form-group"><label class="form-label">רכב *</label><select class="form-control" id="f-vid"><option value="">בחר רכב...</option>${vehicleOptions(ins?.vehicleId)}</select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">חברת ביטוח *</label><input class="form-control" id="f-company" value="${ins?.company||''}" placeholder="מגדל"></div>
+      <div class="form-group"><label class="form-label">סוג ביטוח</label>
+        <select class="form-control" id="f-type">
+          ${['מקיף','צד ג\'','חובה בלבד','מקיף + חובה'].map(t => `<option value="${t}" ${ins?.type===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">מספר פוליסה</label><input class="form-control" id="f-pol" value="${ins?.policyNum||''}" placeholder="POL-001-2024"></div>
+      <div class="form-group"><label class="form-label">פרמיה חודשית (₪)</label><input class="form-control" id="f-prem" type="number" value="${ins?.monthlyPremium||''}" placeholder="380"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">תאריך תחילה</label><input class="form-control" id="f-start" type="date" value="${ins?.startDate||''}"></div>
+      <div class="form-group"><label class="form-label">תאריך סיום *</label><input class="form-control" id="f-end" type="date" value="${ins?.endDate||''}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">הערות</label><input class="form-control" id="f-note" value="${ins?.note||''}"></div>
+  `, () => {
+    const vid = document.getElementById('f-vid').value;
+    const company = document.getElementById('f-company').value.trim();
+    const endDate = document.getElementById('f-end').value;
+    if (!vid || !company || !endDate) { alert('רכב, חברה ותאריך סיום הם שדות חובה'); return false; }
+    const obj = { id: id||uid(), vehicleId: vid, company, type: document.getElementById('f-type').value, policyNum: document.getElementById('f-pol').value, monthlyPremium: +document.getElementById('f-prem').value||null, startDate: document.getElementById('f-start').value, endDate, note: document.getElementById('f-note').value };
+    if (id) { const i = data.insurance.findIndex(x => x.id === id); data.insurance[i] = obj; }
+    else data.insurance.push(obj);
+    saveData(data); closeModal(); showView('insurance');
+  });
+}
+
+function openLicenseModal(id) {
+  const lic = id ? data.licenses.find(x => x.id === id) : null;
+  showModal(`${lic ? 'עריכת' : 'הוספת'} רישוי`, `
+    <div class="form-group"><label class="form-label">רכב *</label><select class="form-control" id="f-vid"><option value="">בחר רכב...</option>${vehicleOptions(lic?.vehicleId)}</select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">תוקף עד *</label><input class="form-control" id="f-exp" type="date" value="${lic?.expiry||''}"></div>
+      <div class="form-group"><label class="form-label">טסט אחרון</label><input class="form-control" id="f-last" type="date" value="${lic?.lastTest||''}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">הערות (תיקונים, בעיות ידועות)</label><textarea class="form-control" id="f-note" rows="3">${lic?.note||''}</textarea></div>
+  `, () => {
+    const vid = document.getElementById('f-vid').value;
+    const exp = document.getElementById('f-exp').value;
+    if (!vid || !exp) { alert('רכב ותאריך תוקף הם שדות חובה'); return false; }
+    const obj = { id: id||uid(), vehicleId: vid, expiry: exp, lastTest: document.getElementById('f-last').value, note: document.getElementById('f-note').value };
+    if (id) { const i = data.licenses.findIndex(x => x.id === id); data.licenses[i] = obj; }
+    else data.licenses.push(obj);
+    saveData(data); closeModal(); showView('license');
+  });
+}
+
+function openGarageModal(id) {
+  const g = id ? data.garage.find(x => x.id === id) : null;
+  showModal(`${g ? 'עריכת' : 'הוספת'} טיפול`, `
+    <div class="form-group"><label class="form-label">רכב *</label><select class="form-control" id="f-vid"><option value="">בחר רכב...</option>${vehicleOptions(g?.vehicleId)}</select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">תאריך *</label><input class="form-control" id="f-date" type="date" value="${g?.date||new Date().toISOString().split('T')[0]}"></div>
+      <div class="form-group"><label class="form-label">מוסך *</label><input class="form-control" id="f-garage" value="${g?.garageName||''}" placeholder="מוסך כרמי"></div>
+    </div>
+    <div class="form-group"><label class="form-label">תיאור העבודה *</label><input class="form-control" id="f-desc" value="${g?.desc||''}" placeholder="החלפת שמן, בלמים..."></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">עלות (₪)</label><input class="form-control" id="f-cost" type="number" value="${g?.cost||''}" placeholder="500"></div>
+      <div class="form-group"><label class="form-label">ק"מ בטיפול</label><input class="form-control" id="f-km" type="number" value="${g?.km||''}" placeholder="85000"></div>
+    </div>
+    <div class="section-divider">טיפול הבא</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">תאריך טיפול הבא</label><input class="form-control" id="f-ndate" type="date" value="${g?.nextDate||''}"></div>
+      <div class="form-group"><label class="form-label">ק"מ לטיפול הבא</label><input class="form-control" id="f-nkm" type="number" value="${g?.nextKm||''}" placeholder="95000"></div>
+    </div>
+    <div class="form-group"><label class="form-label">הערות</label><input class="form-control" id="f-note" value="${g?.note||''}"></div>
+  `, () => {
+    const vid = document.getElementById('f-vid').value;
+    const date = document.getElementById('f-date').value;
+    const garageName = document.getElementById('f-garage').value.trim();
+    const desc = document.getElementById('f-desc').value.trim();
+    if (!vid || !date || !garageName || !desc) { alert('רכב, תאריך, מוסך ותיאור הם שדות חובה'); return false; }
+    const obj = { id: id||uid(), vehicleId: vid, date, garageName, desc, cost: +document.getElementById('f-cost').value||null, km: +document.getElementById('f-km').value||null, nextDate: document.getElementById('f-ndate').value||null, nextKm: +document.getElementById('f-nkm').value||null, note: document.getElementById('f-note').value };
+    // update vehicle km
+    const km = obj.km;
+    if (km) { const v = data.vehicles.find(x => x.id === vid); if (v && (!v.km || km > v.km)) { v.km = km; } }
+    if (id) { const i = data.garage.findIndex(x => x.id === id); data.garage[i] = obj; }
+    else data.garage.push(obj);
+    saveData(data); closeModal(); showView('garage');
+  });
+}
+
+function openExpenseModal(id) {
+  const e = id ? data.expenses.find(x => x.id === id) : null;
+  const cats = ['דלק','ביטוח','מוסך','רישוי','חניה','קנסות','אחר'];
+  showModal(`${e ? 'עריכת' : 'הוספת'} הוצאה`, `
+    <div class="form-group"><label class="form-label">רכב *</label><select class="form-control" id="f-vid"><option value="">בחר רכב...</option>${vehicleOptions(e?.vehicleId)}</select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">תאריך *</label><input class="form-control" id="f-date" type="date" value="${e?.date||new Date().toISOString().split('T')[0]}"></div>
+      <div class="form-group"><label class="form-label">קטגוריה</label>
+        <select class="form-control" id="f-cat">
+          ${cats.map(c => `<option value="${c}" ${e?.category===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">סכום (₪) *</label><input class="form-control" id="f-amount" type="number" value="${e?.amount||''}" placeholder="250"></div>
+      <div class="form-group"><label class="form-label">תיאור</label><input class="form-control" id="f-desc" value="${e?.desc||''}" placeholder="תדלוק, פרמיה..."></div>
+    </div>
+    <div class="form-group"><label class="form-label">הערות</label><input class="form-control" id="f-note" value="${e?.note||''}"></div>
+  `, () => {
+    const vid = document.getElementById('f-vid').value;
+    const date = document.getElementById('f-date').value;
+    const amount = +document.getElementById('f-amount').value;
+    if (!vid || !date || !amount) { alert('רכב, תאריך וסכום הם שדות חובה'); return false; }
+    const obj = { id: id||uid(), vehicleId: vid, date, category: document.getElementById('f-cat').value, amount, desc: document.getElementById('f-desc').value, note: document.getElementById('f-note').value };
+    if (id) { const i = data.expenses.findIndex(x => x.id === id); data.expenses[i] = obj; }
+    else data.expenses.push(obj);
+    saveData(data); closeModal(); showView('expenses');
+  });
+}
+
+// ==================== MODAL ENGINE ====================
+function showModal(title, bodyHtml, onSave) {
+  document.getElementById('modal-container').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">${title}</span>
+          <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">${bodyHtml}</div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" onclick="closeModal()">ביטול</button>
+          <button class="btn btn-primary" onclick="handleSave()">שמור</button>
+        </div>
+      </div>
+    </div>`;
+  window._modalSave = onSave;
+}
+
+function handleSave() { if (window._modalSave) window._modalSave(); }
+function closeModal() { document.getElementById('modal-container').innerHTML = ''; }
+
+// ==================== DELETE ====================
+function deleteVehicle(id) {
+  if (!confirm('האם למחוק את הרכב? כל הנתונים הקשורים אליו יימחקו.')) return;
+  data.vehicles = data.vehicles.filter(v => v.id !== id);
+  data.insurance = data.insurance.filter(i => i.vehicleId !== id);
+  data.licenses = data.licenses.filter(l => l.vehicleId !== id);
+  data.garage = data.garage.filter(g => g.vehicleId !== id);
+  data.expenses = data.expenses.filter(e => e.vehicleId !== id);
+  saveData(data); showView('vehicles');
+}
+
+function deleteItem(collection, id) {
+  if (!confirm('האם למחוק את הרשומה?')) return;
+  data[collection] = data[collection].filter(x => x.id !== id);
+  saveData(data); showView(currentView);
+}
+
+// ==================== DRIVE SYNC ====================
+function setSyncStatus(ok, label) {
+  const dot = document.getElementById('sync-dot');
+  const status = document.getElementById('sync-status');
+  if (dot) dot.style.background = ok ? 'var(--green)' : 'var(--text2)';
+  if (status) status.textContent = label;
+}
+
+function exportToFile() {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'vehicle_manager_data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+  setSyncStatus(true, 'יוצא בהצלחה');
+  const t = document.getElementById('sync-time');
+  if (t) t.textContent = now;
+  showToast('✅ הקובץ הורד — שמור אותו ב-Drive שלך');
+}
+
+function importFromFile() {
+  document.getElementById('file-input').click();
+}
+
+function handleFileImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported.vehicles || !imported.insurance) { showToast('❌ קובץ לא תקין', true); return; }
+      if (!confirm(`האם לטעון את הנתונים מהקובץ? (${imported.vehicles.length} רכבים, ${imported.expenses?.length||0} הוצאות)\nהנתונים הנוכחיים יוחלפו.`)) return;
+      data = imported;
+      saveData(data);
+      setSyncStatus(true, 'טעינה הושלמה');
+      const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+      const t = document.getElementById('sync-time');
+      if (t) t.textContent = now;
+      showView(currentView);
+      showToast('✅ הנתונים נטענו בהצלחה מה-Drive');
+    } catch(err) {
+      showToast('❌ שגיאה בקריאת הקובץ', true);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function copyToClipboard() {
+  const json = JSON.stringify(data, null, 2);
+  navigator.clipboard.writeText(json).then(() => {
+    showToast('📋 הנתונים הועתקו ללוח — אפשר להדביק ב-Claude לסנכרון');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = json;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('📋 הועתק ללוח');
+  });
+}
+
+// Toast notification
+function showToast(msg, isError) {
+  const el = document.createElement('div');
+  el.textContent = msg;
+  Object.assign(el.style, {
+    position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
+    background: isError ? 'var(--red)' : '#22263a', color: 'var(--text)',
+    padding: '10px 20px', borderRadius: '8px', fontSize: '.88rem',
+    border: '1px solid var(--border)', zIndex: '9999', boxShadow: '0 4px 20px rgba(0,0,0,.4)',
+    transition: 'opacity .3s'
+  });
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+// ==================== THEME ====================
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  localStorage.setItem('vehicle_mgr_theme', isLight ? 'light' : 'dark');
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = isLight ? '🌑' : '🌙';
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('vehicle_mgr_theme');
+  if (saved === 'light') {
+    document.body.classList.add('light');
+    const btn = document.getElementById('theme-btn');
+    if (btn) btn.textContent = '🌑';
+  }
+}
+
+// ==================== INIT ====================
+initTheme();
+showView('dashboard');
+</script>
+</body>
+</html>

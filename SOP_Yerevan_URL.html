@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency SOP – NVIDIA Yerevan</title>
+  <style>
+    :root {
+      --nvg: #76B900;
+      --nvg-dk: #4F7C00;
+      --nvg-lt: #EFF7DE;
+      --ink: #111111;
+      --dark: #1A1A1A;
+      --mid: #555550;
+      --grey: #888883;
+      --rule: #E0E0DC;
+      --bg: #F8F8F6;
+      --white: #FFFFFF;
+      --warn: #C45000;
+      --warn-lt: #FFF3EC;
+      --alert: #A80000;
+      --alert-lt: #FFF0F0;
+      --info: #1D4E6B;
+      --info-lt: #EEF4F8;
+      --purple: #6B21A8;
+      --purple-lt: #F5F0FF;
+      --radius: 8px;
+      --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
+      --shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg); color: var(--ink);
+      font-size: 14px; line-height: 1.5;
+    }
+
+    .green-stripe { height: 3px; background: linear-gradient(to right, var(--nvg), #5A9000); }
+
+    .top-bar {
+      background: var(--white); border-bottom: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 24px; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06); flex-wrap: wrap; gap: 8px;
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 14px; }
+    .nvlogo { font-size: 17px; font-weight: 900; letter-spacing: -0.5px; color: var(--dark); }
+    .nvlogo span { color: var(--nvg); }
+    .top-divider { width: 1px; height: 18px; background: var(--rule); }
+    .top-bar .doc-title { font-size: 12px; color: var(--grey); font-weight: 500; }
+    .badge {
+      background: var(--nvg-lt); color: var(--nvg-dk);
+      border: 1px solid #C5E080; padding: 3px 10px;
+      border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+    }
+
+    .main { max-width: 1000px; margin: 0 auto; padding: 20px 16px 48px; }
+
+    /* HERO */
+    .hero {
+      background: var(--white); border: 1px solid var(--rule);
+      border-radius: var(--radius); padding: 18px 22px;
+      margin-bottom: 16px; display: flex; align-items: center; gap: 18px;
+      box-shadow: var(--shadow); border-left: 4px solid var(--nvg);
+    }
+    .hero-icon { font-size: 28px; flex-shrink: 0; }
+    .hero-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: var(--grey); text-transform: uppercase; margin-bottom: 3px; }
+    .hero-title { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+    .hero-sub {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--bg); border: 1px solid var(--rule);
+      border-radius: 5px; padding: 4px 10px;
+      font-size: 12px; color: var(--mid);
+    }
+
+    /* GRIDS */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    /* CARD */
+    .card {
+      background: var(--white); border: 1px solid var(--rule);
+      border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+    }
+    .card-header {
+      padding: 10px 14px; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 7px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .card-body { padding: 14px; }
+    .card-body-flush { padding: 0; }
+
+    .hd-green  { background: var(--nvg); color: white; border-bottom: none; }
+    .hd-dark   { background: var(--dark); color: white; border-bottom: none; }
+    .hd-info   { background: var(--info); color: white; border-bottom: none; }
+    .hd-warn   { background: var(--warn); color: white; border-bottom: none; }
+    .hd-alert  { background: var(--alert-lt); color: var(--alert); border-bottom-color: #FFCCCC; }
+
+    /* CONTACTS */
+    .contacts-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .contacts-table tr:nth-child(even) { background: var(--bg); }
+    .contacts-table td { padding: 7px 12px; border-bottom: 1px solid var(--rule); }
+    .contacts-table tr:last-child td { border-bottom: none; }
+    .contacts-table .phone { font-weight: 800; color: var(--alert); font-size: 13px; white-space: nowrap; direction: ltr; font-family: monospace; }
+    .contacts-table .role { font-weight: 600; color: var(--info); }
+    .contacts-table .sep { background: var(--info-lt); font-size: 10px; font-weight: 700; color: var(--info); padding: 5px 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    /* SITE INFO */
+    .binfo { display: flex; gap: 8px; margin-bottom: 7px; font-size: 13px; align-items: baseline; }
+    .binfo-label { font-weight: 700; color: var(--grey); min-width: 90px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .binfo-val { font-weight: 600; color: var(--dark); }
+
+    .floors-strip { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .floor-chip {
+      border-radius: 6px; padding: 5px 10px; text-align: center;
+      font-size: 13px; font-weight: 800; border: 1.5px solid; min-width: 72px;
+    }
+    .floor-chip.nvidia { border-color: var(--nvg); background: var(--nvg-lt); color: var(--nvg-dk); }
+    .floor-chip.assembly { border-color: var(--info); background: var(--info-lt); color: var(--info); }
+    .floor-chip-label { font-size: 9px; font-weight: 400; display: block; margin-top: 1px; }
+
+    .warn-note {
+      margin-top: 12px; background: #FFFBEE; border: 1px solid #EEE0A0;
+      border-left: 3px solid #D4A000; border-radius: 6px;
+      padding: 9px 12px; font-size: 12px; font-weight: 700; line-height: 1.5; color: var(--mid);
+    }
+
+    /* EVAC STEPS */
+    .evac-step {
+      border-radius: 7px; padding: 10px 14px;
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 13px; font-weight: 600; margin-top: 8px;
+      background: var(--white); border: 1px solid var(--rule);
+    }
+    .e-num {
+      background: var(--nvg); color: white; border-radius: 50%;
+      width: 24px; height: 24px; min-width: 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 900; flex-shrink: 0;
+    }
+    .e-title { font-weight: 700; color: var(--dark); }
+    .e-sub { font-size: 11.5px; font-weight: 400; margin-top: 2px; color: var(--mid); }
+    .es1 { border-left: 3px solid var(--alert); }
+    .es2 { border-left: 3px solid var(--warn); }
+    .es3 { border-left: 3px solid var(--info); }
+    .es4 { border-left: 3px solid var(--nvg); }
+    .es5 { border-left: 3px solid var(--warn); }
+    .es6 { border-left: 3px solid var(--nvg); }
+    .evac-arrow { text-align: center; color: var(--rule); font-size: 12px; padding: 1px 0; }
+
+    .dis-note {
+      background: #FFFBEE; border: 1px solid #EEE0A0; border-left: 3px solid #D4A000;
+      padding: 10px 14px; border-radius: 6px; font-size: 12.5px; margin-top: 10px; line-height: 1.6; color: var(--mid);
+    }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-size: 13px; font-weight: 700; color: var(--dark);
+      margin: 20px 0 10px; display: flex; align-items: center; gap: 8px;
+      padding-bottom: 6px; border-bottom: 2px solid var(--nvg);
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .st-icon { color: var(--nvg); }
+
+    /* SCENARIOS */
+    .scenarios-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; margin-bottom: 10px;
+    }
+    @media (max-width: 600px) { .scenarios-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .scenario-card {
+      background: var(--white); border: 1.5px solid var(--rule);
+      border-radius: var(--radius); padding: 12px 10px; text-align: center;
+      cursor: pointer; box-shadow: var(--shadow);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .scenario-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .scenario-card.active { border-color: var(--nvg); box-shadow: 0 0 0 2px var(--nvg-lt); }
+    .s-icon { font-size: 24px; margin-bottom: 5px; }
+    .s-title { font-size: 12px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .s-action { font-size: 10.5px; color: var(--grey); }
+    .s-tag {
+      display: inline-block; margin-top: 5px; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.3px; padding: 2px 7px; border-radius: 4px;
+    }
+    .tag-red    { background: var(--alert-lt); color: var(--alert); }
+    .tag-orange { background: var(--warn-lt); color: var(--warn); }
+    .tag-blue   { background: var(--info-lt); color: var(--info); }
+    .tag-green  { background: var(--nvg-lt); color: var(--nvg-dk); }
+    .tag-purple { background: var(--purple-lt); color: var(--purple); }
+    .tag-teal   { background: #F0FAF5; color: #0D6B3A; }
+
+    /* SCENARIO DETAIL */
+    .scenario-detail {
+      display: none; background: var(--white); border: 1px solid var(--rule);
+      border-radius: var(--radius); padding: 18px 20px; margin-bottom: 14px;
+      border-top: 3px solid var(--nvg); box-shadow: var(--shadow);
+    }
+    .scenario-detail.active { display: block; }
+    .scenario-detail h3 { font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
+
+    /* STEPS */
+    .steps { list-style: none; }
+    .steps li {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 8px 0; border-bottom: 1px solid var(--rule);
+      font-size: 13px; line-height: 1.55;
+    }
+    .steps li:last-child { border-bottom: none; }
+    .sn {
+      border-radius: 50%; width: 22px; height: 22px; min-width: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: white; margin-top: 1px; flex-shrink: 0;
+    }
+    .sn-red    { background: var(--alert); }
+    .sn-orange { background: var(--warn); }
+    .sn-blue   { background: var(--info); }
+    .sn-green  { background: var(--nvg); }
+    .sn-purple { background: var(--purple); }
+
+    .note-box {
+      background: var(--warn-lt); border: 1px solid #F0C8A0; border-left: 3px solid var(--warn);
+      border-radius: 6px; padding: 10px 14px; font-size: 12px; margin-top: 10px; line-height: 1.6;
+    }
+    .note-box-alert {
+      background: var(--alert-lt); border: 1px solid #FFCCCC; border-left: 3px solid var(--alert);
+      border-radius: 6px; padding: 10px 14px; font-size: 12px; margin-bottom: 10px; font-weight: 700; line-height: 1.5;
+    }
+    .note-box-quake {
+      background: #FFF8EE; border: 1px solid #F0D080; border-left: 3px solid #B87800;
+      border-radius: 6px; padding: 10px 14px; font-size: 13px; margin-bottom: 10px; font-weight: 700; color: #7D4E00; line-height: 1.5;
+    }
+
+    /* AED */
+    .aed-box {
+      background: var(--nvg-lt); border: 1px solid #C5E080;
+      border-radius: 8px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 12px; margin-top: 10px;
+    }
+    .aed-icon { font-size: 28px; }
+    .aed-title { font-size: 13px; font-weight: 800; color: var(--nvg-dk); }
+    .aed-loc { font-size: 12px; color: var(--mid); margin-top: 2px; }
+
+    /* ROLES TABLE */
+    .roles-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .roles-table th {
+      background: var(--dark); color: white; padding: 9px 12px;
+      text-align: left; font-weight: 600; font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase;
+    }
+    .roles-table td { padding: 8px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+    .roles-table tr:last-child td { border-bottom: none; }
+    .roles-table tr:nth-child(even) td { background: var(--bg); }
+    .rn { font-weight: 700; color: var(--info); }
+
+    /* MAP */
+    .map-wrap { text-align: center; margin-bottom: 12px; }
+    .map-wrap svg { width: 100%; max-width: 540px; border-radius: 8px; border: 1px solid var(--rule); }
+    .map-note {
+      background: #F0FAF5; border: 1px solid #A8D8B8; border-left: 3px solid #0D6B3A;
+      border-radius: 6px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; line-height: 1.7;
+    }
+    .map-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--nvg); color: white;
+      padding: 9px 18px; border-radius: 7px; border: none;
+      text-decoration: none; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 4px;
+    }
+    .map-btn:hover { background: var(--nvg-dk); }
+
+    /* FOOTER */
+    .footer {
+      text-align: center; color: var(--grey); font-size: 11px;
+      padding: 18px; border-top: 1px solid var(--rule); margin-top: 20px; line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+
+<div class="green-stripe"></div>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="nvlogo">N<span>V</span>IDIA</div>
+    <div class="top-divider"></div>
+    <div class="doc-title">Emergency SOP &nbsp;·&nbsp; Yerevan – 19/1 Sayat-Nova Avenue</div>
+  </div>
+  <div class="badge">Internal Use Only &nbsp;·&nbsp; EHS-SOP-ARM-001</div>
+</div>
+
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">🛡️</div>
+    <div>
+      <div class="hero-label">Emergency & Evacuation SOP</div>
+      <div class="hero-title">NVIDIA Yerevan</div>
+      <div class="hero-sub">📍 Nova Plaza Business Center, Floor 2 &nbsp;·&nbsp; 19/1 Sayat-Nova Avenue, 0001 Yerevan</div>
+    </div>
+  </div>
+
+  <!-- CONTACTS + SITE INFO -->
+  <div class="grid-2">
+
+    <div class="card">
+      <div class="card-header hd-dark">📞 &nbsp;Emergency Contacts</div>
+      <div class="card-body-flush">
+        <table class="contacts-table">
+          <tr><td class="sep" colspan="2">Armenian Emergency Services</td></tr>
+          <tr><td class="role">General Emergency</td><td class="phone">911</td></tr>
+          <tr><td class="role">Fire Brigade</td><td class="phone">101</td></tr>
+          <tr><td class="role">Police</td><td class="phone">102</td></tr>
+          <tr><td class="role">Ambulance (Meda)</td><td class="phone">103</td></tr>
+          <tr><td class="role">Gas Emergency</td><td class="phone">104</td></tr>
+          <tr><td class="role">Vardanants Medical Center</td><td class="phone">+374-11-592100</td></tr>
+          <tr><td class="sep" colspan="2">NVIDIA Internal</td></tr>
+          <tr><td class="role">RSOC 24/7 (Primary)</td><td class="phone">+972 74-723-6000</td></tr>
+          <tr><td class="role">RSOC 24/7 (Alternate)</td><td class="phone">+972 4-959-01-99</td></tr>
+          <tr><td class="role">RSOC Non-Emergency</td><td class="phone">+972 74-723-6003/4</td></tr>
+          <tr><td class="sep" colspan="2">Yerevan Site</td></tr>
+          <tr><td class="role">Site Leader – Dmitry Duka</td><td class="phone">+374 98 772 811</td></tr>
+          <tr><td class="role">SEC / Safety Officer – Marina Badalyan</td><td class="phone">+374 44 417 801</td></tr>
+          <tr><td class="role">Deputy IC – Rita Khachikyan</td><td class="phone">+374 91 709 970</td></tr>
+          <tr><td class="role">IT / NER Room – Tigran Karakhanyan</td><td class="phone">+374 41 515 281</td></tr>
+          <tr><td class="role">Facility Mgmt – Karen Zakaryan</td><td class="phone">+374 41 668 833</td></tr>
+          <tr><td class="role">Property Mgr – Hasmik Mkoyan</td><td class="phone">+374 98 223 223 6</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header hd-info">🏢 &nbsp;Site Details</div>
+      <div class="card-body">
+        <div class="binfo"><div class="binfo-label">Address</div><div class="binfo-val">19/1 Sayat-Nova Ave, Yerevan</div></div>
+        <div class="binfo"><div class="binfo-label">Building</div><div class="binfo-val">Nova Plaza Business Center</div></div>
+        <div class="binfo"><div class="binfo-label">Employees</div><div class="binfo-val">~96</div></div>
+        <div class="binfo"><div class="binfo-label">Security</div><div class="binfo-val">Realty Management LLC</div></div>
+        <div class="binfo"><div class="binfo-label">Wi-Fi (Guest)</div><div class="binfo-val">NV_Visitor / welcometonvidia</div></div>
+
+        <div style="font-size:10px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.4px;margin-top:12px;margin-bottom:6px">NVIDIA Floors</div>
+        <div class="floors-strip">
+          <div class="floor-chip nvidia">Floor 2<span class="floor-chip-label">Offices</span></div>
+        </div>
+
+        <div style="font-size:10px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.4px;margin:10px 0 6px">Assembly Area</div>
+        <div class="floors-strip">
+          <div class="floor-chip assembly">Ani Plaza Hotel<span class="floor-chip-label">Front – Ground Floor</span></div>
+        </div>
+
+        <div class="warn-note">
+          ⚠️ Armenia is an earthquake-prone region. Know your DROP-COVER-HOLD position and the evacuation route in advance!
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EVACUATION -->
+  <div class="section-title"><span class="st-icon">▶</span> Step-by-Step Evacuation Procedure</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body">
+      <div class="evac-step es1">
+        <div class="e-num">1</div>
+        <div><div class="e-title">Stop all activity immediately – leave equipment behind</div>
+        <div class="e-sub">Upon hearing the alarm or receiving an evacuation order</div></div>
+      </div>
+      <div class="evac-arrow">↓</div>
+      <div class="evac-step es2">
+        <div class="e-num">2</div>
+        <div><div class="e-title">SEC / Office Manager assumes command and notifies RSOC</div>
+        <div class="e-sub">RSOC: +972 74-723-6000 | Marina Badalyan: +374 44 417 801 | Call Fire 101 / Police 102 as needed</div></div>
+      </div>
+      <div class="evac-arrow">↓</div>
+      <div class="evac-step es3">
+        <div class="e-num">3</div>
+        <div><div class="e-title">Exit via emergency stairs – do NOT use the elevator</div>
+        <div class="e-sub">Fire Marshals: last to leave, check every room on Floor 2 is clear</div></div>
+      </div>
+      <div class="evac-arrow">↓</div>
+      <div class="evac-step es4">
+        <div class="e-num">4</div>
+        <div><div class="e-title">Assemble at the designated Assembly Area</div>
+        <div class="e-sub">In front of Ani Plaza Hotel – Sayat-Nova Avenue, Ground Floor – away from building exits</div></div>
+      </div>
+      <div class="evac-arrow">↓</div>
+      <div class="evac-step es5">
+        <div class="e-num">5</div>
+        <div><div class="e-title">Headcount – managers report to Incident Commander (IC)</div>
+        <div class="e-sub">Report any missing person immediately to IC and RSOC</div></div>
+      </div>
+      <div class="evac-arrow">↓</div>
+      <div class="evac-step es6">
+        <div class="e-num">6</div>
+        <div><div class="e-title">No re-entry until explicit ALL CLEAR from IC</div>
+        <div class="e-sub">IC declares All Clear only after authorisation from local emergency services</div></div>
+      </div>
+      <div class="dis-note">
+        <strong>♿ Employees with disabilities:</strong> Fire Marshal ensures additional assistance on stairs. If evacuation is not possible, employee remains on Floor 2 landing with exact location reported to SEC and emergency services.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIOS -->
+  <div class="section-title"><span class="st-icon">⚡</span> Emergency Scenarios – Click for Details</div>
+  <div class="scenarios-grid">
+    <div class="scenario-card" onclick="showScenario('fire',this)">
+      <div class="s-icon">🔥</div>
+      <div class="s-title">Fire / Smoke</div>
+      <div class="s-action">Extinguisher + 101</div>
+      <div class="s-tag tag-red">Evacuate</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('earthquake',this)">
+      <div class="s-icon">🌍</div>
+      <div class="s-title">Earthquake</div>
+      <div class="s-action">Drop – Cover – Hold</div>
+      <div class="s-tag tag-orange">Shelter</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('medical',this)">
+      <div class="s-icon">🚑</div>
+      <div class="s-title">Medical Emergency</div>
+      <div class="s-action">Ambulance 103 + First Aid</div>
+      <div class="s-tag tag-purple">Medical</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('security',this)">
+      <div class="s-icon">🔒</div>
+      <div class="s-title">Security Threat</div>
+      <div class="s-action">Run · Hide · Fight</div>
+      <div class="s-tag tag-red">Lockdown</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('utility',this)">
+      <div class="s-icon">⚡</div>
+      <div class="s-title">Utility Disruption</div>
+      <div class="s-action">Facility + IT</div>
+      <div class="s-tag tag-green">Operations</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('assembly-map',this)">
+      <div class="s-icon">🗺️</div>
+      <div class="s-title">Assembly Area Map</div>
+      <div class="s-action">Click to view</div>
+      <div class="s-tag tag-teal">Map</div>
+    </div>
+  </div>
+
+  <!-- FIRE -->
+  <div id="fire" class="scenario-detail" style="border-top-color:var(--alert)">
+    <h3>🔥 Fire / Smoke</h3>
+    <div class="note-box-alert">⚠️ This procedure applies to fire/smoke originating within NVIDIA offices – not general building fire alarms</div>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div>Discover fire/smoke – attempt to extinguish with nearest fire extinguisher only if small and your escape route is clear.</div></li>
+      <li><div class="sn sn-red">2</div><div>Activate the nearest Fire Alarm pull station. Call Fire Brigade: <strong>101</strong></div></li>
+      <li><div class="sn sn-red">3</div><div>Notify RSOC: <strong>+972 74-723-6000</strong> | SEC Marina Badalyan assumes Incident Command</div></li>
+      <li><div class="sn sn-red">4</div><div>Evacuate employees via stairs – <strong>do NOT use the elevator</strong> | Fire Marshals: last to leave, check every room</div></li>
+      <li><div class="sn sn-red">5</div><div>Assemble at Ani Plaza Hotel front | Conduct headcount | Report missing persons</div></li>
+      <li><div class="sn sn-red">6</div><div>Prevent re-entry – until official All Clear from emergency services</div></li>
+    </ul>
+    <div class="note-box">
+      <strong>Fire Extinguisher types on site:</strong> <strong>Powder</strong> – office lobby, restroom zone (all fires). <strong>CO2</strong> – NER room (electrical fires only). Never pour water on electrical or flammable liquid fires.
+    </div>
+  </div>
+
+  <!-- EARTHQUAKE -->
+  <div id="earthquake" class="scenario-detail" style="border-top-color:var(--warn)">
+    <h3>🌍 Earthquake</h3>
+    <div class="note-box-quake">
+      ⚠️ Armenia is in an active seismic zone. Know your safe spots in advance – away from windows and heavy furniture!
+    </div>
+    <ul class="steps">
+      <li><div class="sn sn-orange">1</div><div><strong>During shaking: DROP</strong> to the floor, take <strong>COVER</strong> under a sturdy desk or against an interior wall, <strong>HOLD ON</strong></div></li>
+      <li><div class="sn sn-orange">2</div><div>Stay away from windows, exterior walls, shelves, and heavy objects that could fall</div></li>
+      <li><div class="sn sn-orange">3</div><div><strong>Do NOT run outside during shaking</strong> – most injuries occur from falling debris near exits</div></li>
+      <li><div class="sn sn-orange">4</div><div>After shaking stops: check for injuries. Provide First Aid if trained. Evacuate via stairs if building may be structurally compromised</div></li>
+      <li><div class="sn sn-orange">5</div><div>Assemble at Ani Plaza Hotel front | Remain outside until building is declared safe</div></li>
+      <li><div class="sn sn-orange">6</div><div>IC reports status to RSOC: <strong>+972 74-723-6000</strong> | Report any injuries or structural damage</div></li>
+    </ul>
+    <div class="note-box">
+      <strong>After a major earthquake:</strong> Expect aftershocks. Do not re-enter the building until cleared by structural engineers and emergency services. Contact Facility Management: <strong>+374 41 668 833</strong>
+    </div>
+  </div>
+
+  <!-- MEDICAL -->
+  <div id="medical" class="scenario-detail" style="border-top-color:var(--purple)">
+    <h3>🚑 Medical Emergency</h3>
+    <ul class="steps">
+      <li><div class="sn sn-purple">1</div><div>Call Ambulance: <strong>103</strong> – provide: Nova Plaza Business Center, Floor 2, 19/1 Sayat-Nova Avenue, Yerevan | Type of emergency</div></li>
+      <li><div class="sn sn-purple">2</div><div>Notify SEC Marina Badalyan: <strong>+374 44 417 801</strong> | Notify RSOC: <strong>+972 74-723-6000</strong></div></li>
+      <li><div class="sn sn-purple">3</div><div>First Aid Kit – <strong>Office lobby (next to main entrance)</strong> – retrieve immediately</div></li>
+      <li><div class="sn sn-purple">4</div><div>Trained First Aider responds and provides care until ambulance arrives (10 first aiders on site)</div></li>
+      <li><div class="sn sn-purple">5</div><div>Send a colleague to the building entrance to direct the ambulance crew</div></li>
+      <li><div class="sn sn-purple">6</div><div>Do NOT move a seriously injured person unless in immediate further danger</div></li>
+    </ul>
+    <div class="aed-box">
+      <div class="aed-icon">❤️‍🩹</div>
+      <div>
+        <div class="aed-title">First Aid Kit</div>
+        <div class="aed-loc">Office lobby – next to main entrance | Available during office hours</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding:10px 14px;background:var(--info-lt);border:1px solid #B0CCE0;border-left:3px solid var(--info);border-radius:6px;font-size:12px">
+      <strong>Nearest hospital:</strong> Vardanants Medical Center – Vardanants St. 18/1, Yerevan 0010 | Tel: <strong>+374-11-592100</strong>
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div id="security" class="scenario-detail" style="border-top-color:#8B0000">
+    <h3>🔒 Security Threat / Hostile Intruder</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div>Call Police immediately: <strong>102</strong> – provide location and description of threat</div></li>
+      <li><div class="sn sn-red">2</div><div><strong style="color:var(--alert)">RUN</strong> – if a safe escape route exists, evacuate immediately. Leave all belongings.</div></li>
+      <li><div class="sn sn-red">3</div><div><strong style="color:var(--warn)">HIDE</strong> – lock/barricade doors, silence phones, turn off lights, stay low and out of sight</div></li>
+      <li><div class="sn sn-red">4</div><div><strong style="color:#8B0000">FIGHT</strong> – as an absolute last resort only, use any available object to defend yourself</div></li>
+      <li><div class="sn sn-red">5</div><div>SEC reports to RSOC: <strong>+972 74-723-6000</strong> | Initiate building lockdown via property management</div></li>
+      <li><div class="sn sn-red">6</div><div>Do NOT open doors until Police confirms the building is clear</div></li>
+    </ul>
+  </div>
+
+  <!-- UTILITY -->
+  <div id="utility" class="scenario-detail" style="border-top-color:var(--nvg)">
+    <h3>⚡ Utility Disruption</h3>
+    <ul class="steps">
+      <li><div class="sn sn-green">1</div><div>Notify SEC Marina Badalyan: <strong>+374 44 417 801</strong> and Site Leader Dmitry Duka: <strong>+374 98 772 811</strong></div></li>
+      <li><div class="sn sn-green">2</div><div><strong>Power outage:</strong> NER room UPS provides 2-hour backup. Call Electric Networks of Armenia: <strong>1-80</strong></div></li>
+      <li><div class="sn sn-green">3</div><div><strong>Internet outage:</strong> Call UCOM corporate technical support. Contact IT Manager Tigran Karakhanyan: <strong>+374 41 515 281</strong></div></li>
+      <li><div class="sn sn-green">4</div><div>Contact Facility Management (Realty Management LLC): <strong>+374 41 668 833</strong> (Karen Zakaryan)</div></li>
+      <li><div class="sn sn-green">5</div><div>Contact Property Manager (Elite Group CJSC): <strong>+374 98 223 2236</strong> (Hasmik Mkoyan) for building systems</div></li>
+      <li><div class="sn sn-green">6</div><div>Notify RSOC: <strong>+972 74-723-6000</strong> if extended disruption affects business continuity</div></li>
+    </ul>
+    <div class="note-box">
+      <strong>Gas Emergency:</strong> Call Gas Emergency Service: <strong>104</strong>. Evacuate the area. Do not use electrical switches. Open windows if safe to do so.
+    </div>
+  </div>
+
+  <!-- ASSEMBLY MAP -->
+  <div id="assembly-map" class="scenario-detail" style="border-top-color:#0d6b3a">
+    <h3>🗺️ Assembly Area Map – NVIDIA Yerevan</h3>
+    <div class="map-wrap">
+      <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg">
+        <rect width="500" height="320" fill="#EFF4EE"/>
+        <!-- Sayat-Nova Ave (diagonal) -->
+        <rect x="0" y="260" width="500" height="60" fill="#D0D0CE" transform="rotate(-10,250,290)"/>
+        <line x1="0" y1="275" x2="500" y2="275" stroke="white" stroke-width="1.5" stroke-dasharray="16,8" transform="rotate(-10,250,290)"/>
+        <text x="350" y="310" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#555" transform="rotate(-10,350,310)">Sayat-Nova Avenue</text>
+        <!-- Nova Plaza Building -->
+        <rect x="220" y="60" width="180" height="160" rx="5" fill="#2E5FA0" opacity="0.85"/>
+        <text x="310" y="125" text-anchor="middle" font-family="Arial" font-size="11" font-weight="900" fill="white">Nova Plaza</text>
+        <text x="310" y="143" text-anchor="middle" font-family="Arial" font-size="10" fill="#C0D0F0">Business Center</text>
+        <text x="310" y="160" text-anchor="middle" font-family="Arial" font-size="9" fill="#B0D890" font-weight="bold">NVIDIA – Floor 2</text>
+        <!-- Main entrance -->
+        <rect x="275" y="215" width="70" height="14" fill="#555" rx="2"/>
+        <text x="310" y="225" text-anchor="middle" font-family="Arial" font-size="9" fill="white" font-weight="bold">Main Entrance</text>
+        <!-- Ani Plaza Hotel -->
+        <rect x="40" y="80" width="140" height="120" rx="5" fill="#8B6914" opacity="0.7"/>
+        <text x="110" y="130" text-anchor="middle" font-family="Arial" font-size="11" font-weight="900" fill="white">Ani Plaza</text>
+        <text x="110" y="147" text-anchor="middle" font-family="Arial" font-size="10" fill="#F0E0B0">Hotel</text>
+        <!-- Assembly Point -->
+        <defs>
+          <marker id="arryerevan" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#76B900"/>
+          </marker>
+        </defs>
+        <line x1="185" y1="200" x2="155" y2="228" stroke="#76B900" stroke-width="2.5" marker-end="url(#arryerevan)"/>
+        <circle cx="140" cy="245" r="20" fill="#76B900" stroke="white" stroke-width="2.5"/>
+        <text x="140" y="241" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="white">ASSEMBLY</text>
+        <text x="140" y="252" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="white">POINT</text>
+        <!-- Exit arrows from building -->
+        <line x1="295" y1="228" x2="220" y2="248" stroke="#76B900" stroke-width="2" stroke-dasharray="6,3"/>
+        <!-- North compass -->
+        <g transform="translate(470,30)">
+          <circle cx="0" cy="0" r="16" fill="white" stroke="#ccc" stroke-width="1"/>
+          <polygon points="0,-11 -4,3 0,1 4,3" fill="#555"/>
+          <text x="0" y="12" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#555">N</text>
+        </g>
+        <text x="30" y="50" text-anchor="middle" font-family="Arial" font-size="9" fill="#777">West</text>
+        <text x="430" y="50" text-anchor="middle" font-family="Arial" font-size="9" fill="#777">East</text>
+      </svg>
+    </div>
+    <div class="map-note">
+      <strong>📍 Assembly Point:</strong> In front of the Ani Plaza Hotel – Sayat-Nova Avenue, Ground Floor<br>
+      <strong>⚠️ Important:</strong> Stay away from vehicle entrances and away from the building exterior walls
+    </div>
+    <a class="map-btn" href="https://www.google.com/maps/search/?api=1&query=Ani+Plaza+Hotel+Yerevan+Armenia" target="_blank">
+      🗺️ Open in Google Maps
+    </a>
+  </div>
+
+  <!-- ERT + HOSPITAL -->
+  <div class="grid-2" style="margin-top:4px">
+    <div class="card">
+      <div class="card-header hd-warn">🧰 &nbsp;ERT Emergency Cabinet</div>
+      <div class="card-body" style="font-size:13px;color:var(--mid);line-height:1.9">
+        📍 <strong>Location: Office Unit 119</strong> (left of entrance door)<br>
+        🔦 Flashlights + batteries<br>
+        🩹 First Aid / Trauma Kit<br>
+        🧯 Fire extinguisher (lobby)<br>
+        📣 Megaphone &nbsp;|&nbsp; 📻 Radios (×3)<br>
+        🦺 Safety vests &nbsp;|&nbsp; 📯 Whistles<br>
+        🪓 Pry bar + tools<br>
+        🪑 Stryker Stair Chair
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header hd-dark">🏥 &nbsp;Nearest Hospital</div>
+      <div class="card-body">
+        <div style="font-size:14px;font-weight:800;color:var(--dark);margin-bottom:5px">Vardanants Medical Center</div>
+        <div style="font-size:12px;color:var(--mid);margin-bottom:10px">Vardanants St., 18/1 Building, Yerevan 0010, Armenia</div>
+        <div style="font-size:17px;font-weight:900;color:var(--alert);direction:ltr;font-family:monospace">+374-11-592100</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--mid)">🚑 Ambulance (Meda): <strong style="color:var(--alert)">103</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROLES -->
+  <div class="section-title" style="margin-top:18px"><span class="st-icon">▶</span> Emergency Roles</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body-flush">
+      <table class="roles-table">
+        <thead>
+          <tr><th style="width:28%">Role</th><th style="width:26%">Person / Contact</th><th>Primary Responsibility</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rn">Site Leader / Incident Commander (IC)</td>
+            <td>Dmitry Duka<br><span style="font-family:monospace;color:var(--alert)">+374 98 772 811</span><br><span style="font-size:11px;color:var(--mid)">dduka@nvidia.com</span></td>
+            <td>Overall command during emergencies. Main contact between site and NVIDIA corporate. Declares evacuation and All Clear.</td>
+          </tr>
+          <tr>
+            <td class="rn">SEC / Safety Officer (Deputy IC)</td>
+            <td>Marina Badalyan<br><span style="font-family:monospace;color:var(--alert)">+374 44 417 801</span><br><span style="font-size:11px;color:var(--mid)">mbadalyan@nvidia.com</span></td>
+            <td>Leads emergency response, floor sweep, headcount, RSOC communication. Maintains Emergency Kit and ERP.</td>
+          </tr>
+          <tr>
+            <td class="rn">Deputy IC / Office Manager</td>
+            <td>Rita Khachikyan<br><span style="font-family:monospace;color:var(--alert)">+374 91 709 970</span></td>
+            <td>Acts as IC if Site Leader is absent. Headcount management and communication with RSOC.</td>
+          </tr>
+          <tr>
+            <td class="rn">Fire Marshals (8 trained)</td>
+            <td>G. Antiokh, D. Duka, R. Khachikyan, M. Badalyan, T. Karakhanyan, A. Ghazaryan, I. Afanasev, M. Chekh</td>
+            <td>Floor sweep – last to leave. Ensure all rooms are clear. Guide employees to Assembly Area.</td>
+          </tr>
+          <tr>
+            <td class="rn">First Aiders (10 trained)</td>
+            <td>G. Antiokh, D. Duka, R. Khachikyan, M. Badalyan, I. Afanasev, G. Zelenfroind, G. Starikov, M. Chekh, L. Borodinov, A. Babutin</td>
+            <td>First response to medical emergencies. Provide first aid until ambulance arrives. Maintain confidentiality of medical information.</td>
+          </tr>
+          <tr>
+            <td class="rn">IT Manager / NER Room</td>
+            <td>Tigran Karakhanyan<br><span style="font-family:monospace;color:var(--alert)">+374 41 515 281</span></td>
+            <td>IT continuity. NER room UPS (2-hour backup). Manages network and critical lab (Room A2-109).</td>
+          </tr>
+          <tr>
+            <td class="rn">RSOC (Global Security)</td>
+            <td>NVIDIA 24/7<br><span style="font-family:monospace;color:var(--alert)">+972 74-723-6000</span></td>
+            <td>24/7 monitoring. Receives all emergency reports. Coordinates with police/fire/ambulance. Activates NVIDIA crisis response.</td>
+          </tr>
+          <tr>
+            <td class="rn">Team Managers</td>
+            <td>—</td>
+            <td>Account for all team members during emergencies. Report to IC. Designate alternate when absent.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT GRID -->
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header hd-green">🩹 &nbsp;First Aid Kit</div>
+      <div class="card-body" style="font-size:12.5px;color:var(--mid)">
+        Office lobby – main entrance<br>
+        <strong style="color:var(--dark)">10 trained first aiders on site</strong>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header hd-warn">🚒 &nbsp;Fire Brigade</div>
+      <div class="card-body" style="font-size:12.5px;color:var(--mid)">
+        Armenia Fire Service<br>
+        <strong style="direction:ltr;display:block;font-family:monospace;color:var(--alert)">101</strong>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header hd-info">🏥 &nbsp;Ambulance</div>
+      <div class="card-body" style="font-size:12.5px;color:var(--mid)">
+        Meda Ambulance Service<br>
+        <strong style="direction:ltr;display:block;font-family:monospace;color:var(--alert)">103</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    NVIDIA Confidential – Internal Use Only &nbsp;·&nbsp; EHS-SOP-ARM-001 Rev. A &nbsp;·&nbsp; July 2026<br>
+    Yerevan, Armenia &nbsp;·&nbsp; Nova Plaza Business Center, Floor 2, 19/1 Sayat-Nova Avenue &nbsp;·&nbsp; RSOC: RSOC-Israel@nvidia.com
+  </div>
+
+</div>
+
+<script>
+  function showScenario(id, cardEl) {
+    document.querySelectorAll('.scenario-detail').forEach(d => {
+      d.style.display = 'none';
+      d.classList.remove('active');
+    });
+    document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = 'block';
+      el.classList.add('active');
+      setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+    if (cardEl) cardEl.classList.add('active');
+  }
+</script>
+</body>
+</html>

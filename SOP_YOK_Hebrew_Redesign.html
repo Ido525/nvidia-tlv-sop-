@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP חירום ופינוי | NVIDIA יקנעם</title>
+<style>
+  :root {
+    --nvg: #76B900;
+    --nvg-dk: #4F7C00;
+    --nvg-lt: #EFF7DE;
+    --ink: #111111;
+    --dark: #1A1A1A;
+    --mid: #555550;
+    --grey: #888883;
+    --rule: #E0E0DC;
+    --bg: #F8F8F6;
+    --white: #FFFFFF;
+    --card-bg: #FFFFFF;
+    --warn: #C45000;
+    --warn-lt: #FFF3EC;
+    --alert: #A80000;
+    --alert-lt: #FFF0F0;
+    --info: #1D4E6B;
+    --info-lt: #EEF4F8;
+    --radius: 8px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
+    --shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    direction: rtl;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── TOP BAR ── */
+  .top-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 24px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    flex-wrap: wrap; gap: 8px;
+  }
+  .top-bar-left { display: flex; align-items: center; gap: 14px; }
+  .nvlogo { font-size: 17px; font-weight: 900; letter-spacing: -0.5px; color: var(--dark); }
+  .nvlogo span { color: var(--nvg); }
+  .top-bar .divider { width: 1px; height: 18px; background: var(--rule); }
+  .top-bar .doc-title { font-size: 12px; color: var(--grey); font-weight: 500; }
+  .badge {
+    background: var(--nvg-lt); color: var(--nvg-dk);
+    border: 1px solid #C5E080;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  }
+
+  /* ── GREEN TOP STRIPE ── */
+  .green-stripe { height: 3px; background: linear-gradient(to left, var(--nvg), #5A9000); }
+
+  /* ── MAIN ── */
+  .main { max-width: 980px; margin: 0 auto; padding: 20px 16px 48px; }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-bottom: 16px;
+    display: flex; align-items: flex-start; gap: 18px;
+    box-shadow: var(--shadow);
+    border-right: 4px solid var(--nvg);
+  }
+  .hero-icon { font-size: 28px; flex-shrink: 0; }
+  .hero-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: var(--grey); text-transform: uppercase; margin-bottom: 3px; }
+  .hero-assembly { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+  .hero-sub { font-size: 12px; color: var(--mid); margin-bottom: 8px; }
+  .hero-never {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--alert-lt); color: var(--alert);
+    border: 1px solid #FFCCCC;
+    border-radius: 5px; padding: 4px 10px;
+    font-size: 12px; font-weight: 700;
+  }
+
+  /* ── BUILDING TABS ── */
+  .bldg-tabs {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .bldg-tab {
+    padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700;
+    border: 1.5px solid var(--rule); background: var(--white); cursor: pointer;
+    transition: all 0.12s; color: var(--mid);
+  }
+  .bldg-tab:hover { border-color: var(--nvg); color: var(--nvg-dk); }
+  .bldg-tab.active { background: var(--nvg); color: white; border-color: var(--nvg); }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 10px 14px; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 7px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .card-body { padding: 14px; }
+  .card-body-flush { padding: 0; }
+
+  .hd-green { background: var(--nvg); color: white; border-bottom: none; }
+  .hd-dark  { background: var(--dark); color: white; border-bottom: none; }
+  .hd-info  { background: var(--info); color: white; border-bottom: none; }
+  .hd-alert { background: var(--alert-lt); color: var(--alert); border-bottom-color: #FFCCCC; }
+  .hd-warn  { background: var(--warn-lt); color: var(--warn); border-bottom-color: #F0C8A0; }
+
+  /* ── CONTACTS TABLE ── */
+  .contacts-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .contacts-table tr:nth-child(even) { background: var(--bg); }
+  .contacts-table td { padding: 7px 12px; border-bottom: 1px solid var(--rule); }
+  .contacts-table tr:last-child td { border-bottom: none; }
+  .contacts-table .phone { font-weight: 800; color: var(--alert); font-size: 13px; white-space: nowrap; direction: ltr; font-family: monospace; }
+  .contacts-table .role { font-weight: 600; color: var(--info); }
+  .contacts-table .sep { background: var(--info-lt); font-size: 10px; font-weight: 700; color: var(--info); padding: 5px 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  /* ── BUILDING GRID ── */
+  .bldg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  @media (max-width: 640px) { .bldg-grid { grid-template-columns: 1fr 1fr; } }
+  .bldg-card {
+    background: var(--bg); border: 1.5px solid var(--rule);
+    border-radius: 7px; padding: 10px 12px; text-align: center;
+  }
+  .bldg-card .bc-name { font-size: 13px; font-weight: 800; color: var(--dark); }
+  .bldg-card .bc-floors { font-size: 11px; color: var(--nvg-dk); font-weight: 700; margin-top: 2px; }
+  .bldg-card .bc-addr { font-size: 10px; color: var(--grey); margin-top: 3px; }
+
+  .never-strip {
+    background: var(--alert-lt); color: var(--alert);
+    border: 1px solid #FFCCCC; border-radius: 6px;
+    padding: 7px 12px; display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700; margin-top: 10px;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 13px; font-weight: 700; color: var(--dark);
+    margin: 20px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--nvg);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .section-title .st-icon { color: var(--nvg); }
+
+  /* ── EVACUATION FLOW ── */
+  .evac-flow { display: flex; flex-direction: column; gap: 4px; }
+  .evac-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border-radius: 7px;
+    font-size: 13px; font-weight: 600;
+    background: var(--white);
+    border: 1px solid var(--rule);
+  }
+  .evac-step .e-num {
+    background: var(--nvg); color: white;
+    border-radius: 50%; width: 24px; height: 24px; min-width: 24px;
+    font-size: 11px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .evac-step .e-title { font-weight: 700; color: var(--dark); }
+  .evac-step .e-sub { font-size: 11.5px; font-weight: 400; margin-top: 2px; color: var(--mid); }
+  .es1 { border-right: 3px solid var(--alert); }
+  .es2 { border-right: 3px solid var(--warn); }
+  .es3 { border-right: 3px solid var(--info); }
+  .es4 { border-right: 3px solid var(--nvg); }
+  .es5 { border-right: 3px solid var(--warn); }
+  .es6 { border-right: 3px solid var(--nvg); }
+  .evac-arrow { text-align: center; color: var(--rule); font-size: 12px; padding: 1px 0; }
+
+  .dis-note {
+    background: #FFFBEE; border: 1px solid #EEE0A0; border-right: 3px solid #D4A000;
+    padding: 10px 14px; border-radius: 6px;
+    font-size: 12.5px; margin-top: 10px; line-height: 1.6; color: var(--mid);
+  }
+
+  /* ── SCENARIO CARDS ── */
+  .scenarios { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .scenario-card {
+    border-radius: 8px; padding: 12px 14px;
+    flex: 1; min-width: 110px; cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    text-align: center; user-select: none;
+    background: var(--white); border: 1.5px solid var(--rule);
+    box-shadow: var(--shadow);
+  }
+  .scenario-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .scenario-card.active { border-color: var(--nvg); box-shadow: 0 0 0 2px var(--nvg-lt); }
+  .scenario-card .s-icon { font-size: 24px; }
+  .scenario-card .s-title { font-size: 12px; font-weight: 700; margin-top: 4px; color: var(--dark); }
+  .scenario-card .s-sub { font-size: 10.5px; margin-top: 2px; color: var(--grey); }
+  .scenario-card .s-tag {
+    display: inline-block; margin-top: 5px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+    padding: 2px 7px; border-radius: 4px;
+  }
+  .tag-red    { background: var(--alert-lt); color: var(--alert); }
+  .tag-orange { background: var(--warn-lt); color: var(--warn); }
+  .tag-blue   { background: var(--info-lt); color: var(--info); }
+  .tag-green  { background: var(--nvg-lt); color: var(--nvg-dk); }
+  .tag-purple { background: #F5F0FF; color: #6B21A8; }
+  .tag-teal   { background: #F0FAF5; color: #0D6B3A; }
+  .tag-dark   { background: #F0F0F0; color: #333; }
+
+  /* ── SCENARIO DETAIL ── */
+  .scenario-detail {
+    display: none; background: var(--white);
+    border: 1px solid var(--rule); border-radius: var(--radius);
+    padding: 18px 20px; margin-bottom: 14px;
+    border-top: 3px solid var(--nvg);
+    box-shadow: var(--shadow);
+  }
+  .scenario-detail.active { display: block; }
+  .scenario-detail h3 { font-size: 14px; color: var(--dark); margin-bottom: 12px; font-weight: 800; }
+
+  /* ── STEPS ── */
+  .steps { list-style: none; }
+  .steps li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--rule);
+    font-size: 13px; line-height: 1.55;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .sn {
+    border-radius: 50%; width: 22px; height: 22px; min-width: 22px;
+    font-size: 10px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    color: white; margin-top: 1px; flex-shrink: 0;
+  }
+  .sn-red    { background: var(--alert); }
+  .sn-orange { background: var(--warn); }
+  .sn-blue   { background: var(--info); }
+  .sn-green  { background: var(--nvg); }
+  .sn-purple { background: #6B21A8; }
+
+  /* ── ROLES TABLE ── */
+  .roles-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .roles-table th {
+    background: var(--dark); color: white;
+    padding: 9px 12px; text-align: right; font-weight: 600;
+    font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase;
+  }
+  .roles-table td { padding: 8px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .roles-table tr:last-child td { border-bottom: none; }
+  .roles-table tr:nth-child(even) td { background: var(--bg); }
+  .roles-table .rn { font-weight: 700; color: var(--info); }
+
+  /* ── VENDORS TABLE ── */
+  .vendors-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .vendors-table th {
+    background: var(--mid); color: white;
+    padding: 7px 10px; text-align: right; font-weight: 600; font-size: 11px;
+  }
+  .vendors-table td { padding: 6px 10px; border-bottom: 1px solid var(--rule); }
+  .vendors-table tr:nth-child(even) td { background: var(--bg); }
+  .vendors-table tr:last-child td { border-bottom: none; }
+  .vendors-table .ph { font-family: monospace; font-weight: 700; color: var(--alert); direction: ltr; white-space: nowrap; }
+
+  /* ── AED BOX ── */
+  .aed-box {
+    background: var(--nvg-lt); border: 1px solid #C5E080;
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px; margin-top: 10px;
+  }
+  .aed-icon { font-size: 28px; }
+  .aed-title { font-size: 13px; font-weight: 800; color: var(--nvg-dk); }
+  .aed-loc { font-size: 12px; color: var(--mid); margin-top: 2px; }
+
+  /* ── NOTE BOX ── */
+  .note-box {
+    background: var(--warn-lt); border: 1px solid #F0C8A0; border-right: 3px solid var(--warn);
+    border-radius: 6px; padding: 10px 14px;
+    font-size: 12px; margin-top: 10px; line-height: 1.6;
+  }
+  .note-box-info {
+    background: var(--info-lt); border: 1px solid #C0D8E8; border-right: 3px solid var(--info);
+    border-radius: 6px; padding: 10px 14px;
+    font-size: 12px; margin-top: 10px; line-height: 1.6;
+  }
+  .note-box-green {
+    background: #F0FAF5; border: 1px solid #A8D8B8; border-right: 3px solid #0D6B3A;
+    border-radius: 6px; padding: 10px 14px;
+    font-size: 13px; margin-bottom: 12px; line-height: 1.7;
+  }
+
+  /* ── HOSPITALS TABLE ── */
+  .hosp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .hosp-table th { background: #6B21A8; color: white; padding: 7px 10px; text-align: right; font-size: 11px; }
+  .hosp-table td { padding: 6px 10px; border-bottom: 1px solid var(--rule); }
+  .hosp-table tr:nth-child(even) td { background: var(--bg); }
+  .hosp-table tr:last-child td { border-bottom: none; }
+  .hosp-table .ph { font-family: monospace; font-weight: 700; color: var(--alert); direction: ltr; }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center; color: var(--grey); font-size: 11px;
+    padding: 18px; border-top: 1px solid var(--rule); margin-top: 20px;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="green-stripe"></div>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="nvlogo">N<span>V</span>IDIA</div>
+    <div class="divider"></div>
+    <div class="doc-title">SOP חירום ופינוי &nbsp;·&nbsp; קמפוס יקנעם</div>
+  </div>
+  <div class="badge">לשימוש תפעולי &nbsp;·&nbsp; SOP-IL-YOK-001</div>
+</div>
+
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">📍</div>
+    <div>
+      <div class="hero-label">נקודת האיסוף</div>
+      <div class="hero-assembly">אזור כינוס ייעודי לכל בניין – ראה שלטי פינוי בקומה שלך</div>
+      <div class="hero-sub">אוהל תעשייה עופר, רחוב הקידמה 26 ו-28 / רחוב התנועה 3, יקנעם עילית</div>
+      <div class="hero-never">⛔ אסור להשתמש במעלית – מדרגות בלבד</div>
+    </div>
+  </div>
+
+  <!-- CONTACTS + BUILDINGS -->
+  <div class="grid-2">
+
+    <div class="card">
+      <div class="card-header hd-dark">📞 &nbsp;מספרי חירום</div>
+      <div class="card-body-flush">
+        <table class="contacts-table">
+          <tr><td class="sep" colspan="2">חירום לאומי</td></tr>
+          <tr><td class="role">כב"א</td><td class="phone">102</td></tr>
+          <tr><td class="role">מד"א</td><td class="phone">101</td></tr>
+          <tr><td class="role">משטרה</td><td class="phone">100</td></tr>
+          <tr><td class="role">כב"א יקנעם</td><td class="phone">04-612-0726</td></tr>
+          <tr><td class="sep" colspan="2">NVIDIA פנימי</td></tr>
+          <tr><td class="role">RSOC 24/7 (ראשי)</td><td class="phone">074-723-6000/3/4</td></tr>
+          <tr><td class="role">RSOC 24/7 (חלופי)</td><td class="phone">04-959-0199</td></tr>
+          <tr><td class="sep" colspan="2">אתר יקנעם</td></tr>
+          <tr><td class="role">CBRE מתקנים (רמות)</td><td class="phone">052-681-1983</td></tr>
+          <tr><td class="role">מרכז רפואי רמב"ם</td><td class="phone">1-700-505-150</td></tr>
+          <tr><td class="role">מרכז רפואי העמק</td><td class="phone">04-649-5000</td></tr>
+          <tr><td class="role">חומרים מסוכנים – טאביב</td><td class="phone">1800-671-671</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header hd-info">🏢 &nbsp;בניינים בקמפוס</div>
+      <div class="card-body">
+        <div class="bldg-grid">
+          <div class="bldg-card">
+            <div class="bc-name">שלמה A</div>
+            <div class="bc-floors">6 קומות</div>
+            <div class="bc-addr">הקידמה 26</div>
+          </div>
+          <div class="bldg-card">
+            <div class="bc-name">שלמה B</div>
+            <div class="bc-floors">9 קומות</div>
+            <div class="bc-addr">הקידמה 26</div>
+          </div>
+          <div class="bldg-card">
+            <div class="bc-name">חרמון</div>
+            <div class="bc-floors">5 קומות</div>
+            <div class="bc-addr">הקידמה 28</div>
+          </div>
+          <div class="bldg-card">
+            <div class="bc-name">IBC</div>
+            <div class="bc-floors">7 קומות</div>
+            <div class="bc-addr">התנועה 3</div>
+          </div>
+          <div class="bldg-card">
+            <div class="bc-name">תבור</div>
+            <div class="bc-floors">3 קומות</div>
+            <div class="bc-addr">פארק התעשייה</div>
+          </div>
+          <div class="bldg-card">
+            <div class="bc-name">מחסן</div>
+            <div class="bc-floors">3 קומות</div>
+            <div class="bc-addr">כניסה 4 – תבור</div>
+          </div>
+        </div>
+        <div class="never-strip">🚫 &nbsp;AED קיים בכל בניין – קומת קרקע</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EVAC FLOW -->
+  <div class="section-title"><span class="st-icon">▶</span> נוהל פינוי שלב-אחר-שלב</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body">
+      <div class="evac-flow">
+        <div class="evac-step es1">
+          <div class="e-num">1</div>
+          <div>
+            <div class="e-title">הפעלת אזעקה / כריזה</div>
+            <div class="e-sub">הופעלה מערכת אזעקה / לחצן ידני / הכרזת PA – הפסק כל פעילות מיידית</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es2">
+          <div class="e-num">2</div>
+          <div>
+            <div class="e-title">מאבטח NVIDIA נוטל פיקוד ומיידע RSOC</div>
+            <div class="e-sub">RSOC: 074-723-6000/3/4 | CBRE: 052-681-1983 | כב"א יקנעם: 04-612-0726</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es3">
+          <div class="e-num">3</div>
+          <div>
+            <div class="e-title">ERT – אוסף ציוד + סריקת קומות</div>
+            <div class="e-sub">ERT מגיע לארון חירום | אישור מוכנות בקבוצת WhatsApp | סריקת קומות מוקצות + פינוי עובדים במדרגות</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es4">
+          <div class="e-num">4</div>
+          <div>
+            <div class="e-title">כינוס בנקודת האיסוף של הבניין</div>
+            <div class="e-sub">כל בניין – אזור כינוס ייעודי | ראה שלטי פינוי ומפות בקומות | אל תחסום גישת כבאיות ואמבולנס</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es5">
+          <div class="e-num">5</div>
+          <div>
+            <div class="e-title">בדיקת נוכחות</div>
+            <div class="e-sub">מנהל צוות עורך ספירה → מדווח לאחמ"ש על חסרים מיידית</div>
+          </div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es6">
+          <div class="e-num">6</div>
+          <div>
+            <div class="e-title">חזרה לבניין – רק לאחר אישור מנהל האירוע</div>
+            <div class="e-sub">אישור כוחות ההצלה ואחמ"ש בלבד → כניסה מבוקרת</div>
+          </div>
+        </div>
+      </div>
+      <div class="dis-note">
+        <strong>♿ עובדים עם מוגבלות:</strong> ERT מוודא סיוע של עובדים נוספים בירידה במדרגות. אם לא ניתן – יישאר על הפודסת עם עדכון קומה ומיקום מדויק לאחמ"ש ולכוחות ההצלה.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO CARDS -->
+  <div class="section-title"><span class="st-icon">⚡</span> סוגי אירועים – לחץ לפרטים</div>
+  <div class="scenarios">
+    <div class="scenario-card" onclick="showScenario('fire',this)">
+      <div class="s-icon">🔥</div>
+      <div class="s-title">אש / עשן</div>
+      <div class="s-sub">כבה + פנה</div>
+      <div class="s-tag tag-red">פינוי</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('rockets',this)">
+      <div class="s-icon">🚀</div>
+      <div class="s-title">אזעקה – רקטות</div>
+      <div class="s-sub">ממ"ד בכל בניין</div>
+      <div class="s-tag tag-orange">מקלט</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('security',this)">
+      <div class="s-icon">🔫</div>
+      <div class="s-title">אירוע ביטחוני</div>
+      <div class="s-sub">Run-Hide-Fight</div>
+      <div class="s-tag tag-red">נעילה</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('quake',this)">
+      <div class="s-icon">🌍</div>
+      <div class="s-title">רעידת אדמה</div>
+      <div class="s-sub">Drop-Cover-Hold</div>
+      <div class="s-tag tag-blue">Drop-Cover</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('medical',this)">
+      <div class="s-icon">🚑</div>
+      <div class="s-title">חירום רפואי</div>
+      <div class="s-sub">101 + AED</div>
+      <div class="s-tag tag-purple">רפואי</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('hazmat',this)">
+      <div class="s-icon">☢️</div>
+      <div class="s-title">חומרים מסוכנים</div>
+      <div class="s-sub">בידוד + 102</div>
+      <div class="s-tag tag-green">חמ"ס</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('bomb',this)">
+      <div class="s-icon">💣</div>
+      <div class="s-title">איום פצצה</div>
+      <div class="s-sub">אל תנתק</div>
+      <div class="s-tag tag-dark">נוהל</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('elevator',this)">
+      <div class="s-icon">🛗</div>
+      <div class="s-title">תקלת מעלית</div>
+      <div class="s-sub">לחץ אזעקה</div>
+      <div class="s-tag tag-blue">תקלה</div>
+    </div>
+  </div>
+
+  <!-- FIRE -->
+  <div id="fire" class="scenario-detail" style="border-top-color:var(--alert)">
+    <h3>🔥 אש / עשן</h3>
+    <div class="note-box" style="background:var(--alert-lt);border-color:#FFCCCC;border-right-color:var(--alert);margin-bottom:10px">
+      ⚠️ נוהל זה מתייחס לאירוע אש/עשן שמקורו במשרדי NVIDIA – לא לאזעקת אש כללית של הבניין
+    </div>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div>גלה אש/עשן – נסה לכבות עם המטף הקרוב. אם אינך משתלט – פנה לאחור ופנה את האנשים שמסביך.</div></li>
+      <li><div class="sn sn-red">2</div><div>הפעל לחצן כיבוי ידני | הזנק כבאות: <strong>102</strong> | כב"א יקנעם: <strong>04-612-0726</strong></div></li>
+      <li><div class="sn sn-red">3</div><div>הזנק RSOC: <strong>074-723-6000/3/4</strong> | מאבטח NVIDIA נוטל פיקוד</div></li>
+      <li><div class="sn sn-red">4</div><div>פנה עובדים במדרגות – <strong>לא מעלית</strong> | ERT: אחרון יוצא, בודק כל חדר</div></li>
+      <li><div class="sn sn-red">5</div><div>כינוס בנקודת האיסוף של הבניין | ספירת נוכחות | דיווח על חסרים</div></li>
+      <li><div class="sn sn-red">6</div><div>מנע כניסה חזרה – עד לאישור מפורש מכוחות הצלה</div></li>
+    </ul>
+  </div>
+
+  <!-- ROCKETS -->
+  <div id="rockets" class="scenario-detail" style="border-top-color:var(--warn)">
+    <h3>🚀 אזעקה – ירי רקטות וטילים</h3>
+    <ul class="steps">
+      <li><div class="sn sn-orange">1</div><div>בעת שמיעת אזעקה חיצונית / קבלת התרעה – <strong>היכנס מיידית לממ"ד הקרוב בבניין שלך</strong></div></li>
+      <li><div class="sn sn-orange">2</div><div>סגור דלת וחלון הממ"ד | הישאר בפנים</div></li>
+      <li><div class="sn sn-orange">3</div><div>לא הספקת להגיע לממ"ד – <strong>היכנס לחדר המדרגות הקרוב</strong> ושב על הרצפה הרחק מחלונות</div></li>
+      <li><div class="sn sn-orange">4</div><div>מחוץ למבנה – <strong>שכב על האדמה ושים ידיים על הראש</strong></div></li>
+      <li><div class="sn sn-orange">5</div><div>הישאר בממ"ד עד לקבלת <strong>הודעת שחרור מפיקוד העורף</strong></div></li>
+    </ul>
+    <div class="note-box">
+      <strong>ממ"דים:</strong> בכל בניין בקמפוס (שלמה A, שלמה B, חרמון, IBC, תבור) – עיין במפות הפינוי המוצבות בבניין שלך
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div id="security" class="scenario-detail" style="border-top-color:#8B0000">
+    <h3>🔫 אירוע ביטחוני / אלימות – Run · Hide · Fight</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div><strong style="color:var(--alert)">RUN</strong> – ברח מהאזור מיד, עזוב חפצים</div></li>
+      <li><div class="sn sn-red">2</div><div><strong style="color:var(--warn)">HIDE</strong> – נעל/חסום דלת, כבה אורות, שכב. במידת האפשר – היכנס לממ"ד הקרוב.</div></li>
+      <li><div class="sn sn-red">3</div><div><strong style="color:#8B0000">FIGHT</strong> – כמוצא אחרון בלבד, בכל אמצעי</div></li>
+      <li><div class="sn sn-red">4</div><div>מאבטח NVIDIA מדווח למשטרה <strong>100</strong> ולRSOC <strong>074-723-6000</strong>. מבצעים נעילת בניין.</div></li>
+      <li><div class="sn sn-red">5</div><div>אל תחלץ לבד – המתן לכוחות ביטחון</div></li>
+    </ul>
+  </div>
+
+  <!-- EARTHQUAKE -->
+  <div id="quake" class="scenario-detail" style="border-top-color:var(--info)">
+    <h3>🌍 רעידת אדמה</h3>
+    <ul class="steps">
+      <li><div class="sn sn-blue">1</div><div><strong>בזמן הרעידה:</strong> Drop, Cover, Hold On – התכרבל מתחת לשולחן חזק, כסה ראש וצוואר</div></li>
+      <li><div class="sn sn-blue">2</div><div>הרחק מחלונות, מדפים גבוהים וקירות חיצוניים | <strong>אל תשתמש במעלית</strong></div></li>
+      <li><div class="sn sn-blue">3</div><div>אם בקומות נמוכות – התפנה במהירות דרך המדרגות החוצה</div></li>
+      <li><div class="sn sn-blue">4</div><div>לאחר הרעידה – פנה עובדים דרך המדרגות לנקודת האיסוף</div></li>
+      <li><div class="sn sn-blue">5</div><div>עדכן RSOC: <strong>074-723-6000/3/4</strong> | שים לב לרעידות משנה</div></li>
+      <li><div class="sn sn-blue">6</div><div>בחוץ – הרחק מעצים, כבלי חשמל ומבנים | <strong>אין לחזור ללא אישור</strong></div></li>
+    </ul>
+  </div>
+
+  <!-- MEDICAL -->
+  <div id="medical" class="scenario-detail" style="border-top-color:#6B21A8">
+    <h3>🚑 חירום רפואי</h3>
+    <ul class="steps">
+      <li><div class="sn sn-purple">1</div><div>הזנק RSOC: <strong>074-723-6000/3/4</strong> – מסור שם, בניין, קומה ומהות האירוע</div></li>
+      <li><div class="sn sn-purple">2</div><div>לאירוע מסכן חיים – גם מד"א: <strong>101</strong></div></li>
+      <li><div class="sn sn-purple">3</div><div>AED – קומת קרקע בכל בניין – <strong>הבא מיידית</strong> | השתמש רק אם מוכשר</div></li>
+      <li><div class="sn sn-purple">4</div><div>אבטח אזור – חסום כניסת אנשים מיותרים</div></li>
+      <li><div class="sn sn-purple">5</div><div>אל תזיז נפגע ללא הכשרה</div></li>
+      <li><div class="sn sn-purple">6</div><div>שמור עמדה בכניסה להכוון צוות מד"א</div></li>
+    </ul>
+    <div class="aed-box">
+      <div class="aed-icon">❤️‍🩹</div>
+      <div>
+        <div class="aed-title">AED – דפיברילטור</div>
+        <div class="aed-loc">קומת קרקע בכל אחד מהבניינים | זמין 24/7</div>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px">בתי חולים קרובים</div>
+      <table class="hosp-table">
+        <thead><tr><th>בית חולים</th><th>טלפון</th><th>כתובת</th></tr></thead>
+        <tbody>
+          <tr><td>רמב"ם, חיפה</td><td class="ph">1-700-505-150</td><td>העלייה השנייה 8, חיפה</td></tr>
+          <tr><td>העמק, עפולה</td><td class="ph">04-649-5000</td><td>יצחק רבין 21, עפולה</td></tr>
+          <tr><td>הלל יפה, חדרה</td><td class="ph">04-630-4304</td><td>השלום, חדרה</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- HAZMAT -->
+  <div id="hazmat" class="scenario-detail" style="border-top-color:#166534">
+    <h3>☢️ חומרים מסוכנים (חמ"ס)</h3>
+    <ul class="steps">
+      <li><div class="sn sn-green">1</div><div>בודד אזור מיידית – הרחק עובדים 50+ מטר</div></li>
+      <li><div class="sn sn-green">2</div><div>אל תגע / אל תריח – זהה מרחוק אם ניתן</div></li>
+      <li><div class="sn sn-green">3</div><div>כבאות: <strong>102</strong> עם פרטי החומר אם ידוע</div></li>
+      <li><div class="sn sn-green">4</div><div>הזנק RSOC: <strong>074-723-6000/3/4</strong></div></li>
+      <li><div class="sn sn-green">5</div><div>CBRE מתקנים: <strong>052-681-1983</strong> | ניקוי שפך – טאביב: <strong>1800-671-671</strong></div></li>
+      <li><div class="sn sn-green">6</div><div>שחרור לאוורור פנימי: פנה את הבניין | שחרור חיצוני: הישאר בפנים עד לאישור</div></li>
+    </ul>
+    <div class="note-box">
+      <strong>מרכז ארסים:</strong> 04-777-1900 (קמפוס רמב"ם, חיפה) | <strong>שמירת הסביבה:</strong> 073-273-3351 / *6911
+    </div>
+  </div>
+
+  <!-- BOMB -->
+  <div id="bomb" class="scenario-detail" style="border-top-color:#333">
+    <h3>💣 איום פצצה / חפץ חשוד</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div><strong>איום טלפוני:</strong> אל תנתק – המשך לשאול שאלות. אות לעמית שיצלצל לRSOC: <strong>074-723-6000/3/4</strong></div></li>
+      <li><div class="sn sn-red">2</div><div>תעד: מתי ייפוץ? היכן? כיצד נראה? רעשי רקע? מאפייני קול?</div></li>
+      <li><div class="sn sn-red">3</div><div>RSOC ישקול עם הנהלה ו-LIMT אם לפנות</div></li>
+      <li><div class="sn sn-red">4</div><div><strong>חפץ חשוד:</strong> אל תיגע, אל תריח, כסה וצא מהחדר | שטוף ידיים | הרחק אנשים</div></li>
+      <li><div class="sn sn-red">5</div><div>אם ניתנה פקודת פינוי – יציאה מיידית ללא חפצים אישיים</div></li>
+    </ul>
+  </div>
+
+  <!-- ELEVATOR -->
+  <div id="elevator" class="scenario-detail" style="border-top-color:var(--info)">
+    <h3>🛗 תקלת מעלית</h3>
+    <ul class="steps">
+      <li><div class="sn sn-blue">1</div><div>הישאר רגוע | לחץ על כפתור האזעקה בתוך המעלית</div></li>
+      <li><div class="sn sn-blue">2</div><div>השתמש באינטרקום / טלפון המעלית | מסור מיקומך ומספר הקומה</div></li>
+      <li><div class="sn sn-blue">3</div><div>CBRE מתקנים: <strong>052-681-1983</strong></div></li>
+      <li><div class="sn sn-blue">4</div><div>אל תנסה לפרוץ דלתות או לטפס ללא סיוע מקצועי</div></li>
+      <li><div class="sn sn-blue">5</div><div>בשריפה – <strong>לעולם אל תשתמש במעלית</strong>, השתמש במדרגות בלבד</div></li>
+    </ul>
+  </div>
+
+  <!-- ROLES -->
+  <div class="section-title"><span class="st-icon">▶</span> תפקידים בחירום</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body-flush">
+      <table class="roles-table">
+        <thead>
+          <tr><th style="width:26%">תפקיד</th><th style="width:22%">גוף / אדם</th><th>אחריות עיקרית</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rn">RSOC (מוקד אבטחה)</td>
+            <td><span style="font-family:monospace;font-size:12px;color:var(--alert)">074-723-6000/3/4</span></td>
+            <td>קבלת דיווחים, שיגור כוח ראשוני, הפעלת ERT, הוצאת Everbridge, תיאום משטרה/כבאות/מד"א</td>
+          </tr>
+          <tr>
+            <td class="rn">מאבטח NVIDIA (IC ראשוני)</td>
+            <td>NVIDIA Security</td>
+            <td>נוטל פיקוד, מנחה לנקודת האיסוף, שמירת פרימטר, הגבלת כניסה חוזרת</td>
+          </tr>
+          <tr>
+            <td class="rn">ERT</td>
+            <td>NVIDIA</td>
+            <td>אוסף ציוד מארון חירום, סריקת קומות, הנחיית עובדים, ספירת נוכחות</td>
+          </tr>
+          <tr>
+            <td class="rn">CBRE מתקנים</td>
+            <td><span style="font-family:monospace;font-size:12px;color:var(--alert)">052-681-1983</span></td>
+            <td>תיקון תקלות, ניתוק תשתיות, סיוע בפינוי, ממשק עם ספקי מערכות</td>
+          </tr>
+          <tr>
+            <td class="rn">מנהל ביטחון</td>
+            <td>NVIDIA</td>
+            <td>מנהל אירוע בכיר – תיאום עם RSOC, קבלת החלטות, אישור חזרה לבניין</td>
+          </tr>
+          <tr>
+            <td class="rn">LIMT</td>
+            <td>NVIDIA</td>
+            <td>מופעל לאירועים מרובי-נפגעים / רב-בניינים – תיאום חוצה-תפקודי</td>
+          </tr>
+          <tr>
+            <td class="rn">מנהלי צוות</td>
+            <td>NVIDIA</td>
+            <td>ספירת עובדים ישירים בנקודת האיסוף, דיווח על חסרים לאחמ"ש</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="section-title"><span class="st-icon">▶</span> ציוד חירום (ארון ERT – כל בניין)</div>
+  <div class="grid-3" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-header hd-green">❤️‍🩹 &nbsp;רפואה</div>
+      <div class="card-body" style="font-size:13px;color:var(--mid)">
+        AED (דפיברילטור) – קומת קרקע<br>
+        ערכת עזרה ראשונה + החייאה<br>
+        מסכות CPR (8) | סד צוואר
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header hd-info">🎒 &nbsp;ציוד ERT</div>
+      <div class="card-body" style="font-size:13px;color:var(--mid)">
+        אפודים (11) + קסדות (לבן, 11)<br>
+        מגפונים (6) | רדיו + פנסי ראש (5)<br>
+        אלונקות x4 | שמיכות אש (2)
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header hd-dark">🔧 &nbsp;כלים</div>
+      <div class="card-body" style="font-size:13px;color:var(--mid)">
+        גרזן | פטיש | מוט | מריצות<br>
+        כלי פריצה הידראולי<br>
+        כפפות חמ"ס | ציוד הצלה מאש (6)
+      </div>
+    </div>
+  </div>
+
+  <!-- VENDORS -->
+  <div class="section-title"><span class="st-icon">▶</span> ספקי מערכות – אזעקה ותשתיות</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body-flush">
+      <table class="vendors-table">
+        <thead><tr><th>שירות</th><th>ספק</th><th>טלפון</th></tr></thead>
+        <tbody>
+          <tr><td>אזעקת אש – שלמה A</td><td>Y.M.M</td><td class="ph">052-5499611</td></tr>
+          <tr><td>אזעקת אש – שלמה B</td><td>Megason</td><td class="ph">03-557-0011</td></tr>
+          <tr><td>אזעקת אש – חרמון ו-IBC</td><td>Yaad Security</td><td class="ph">09-740-4776</td></tr>
+          <tr><td>ספרינקלרים</td><td>Karson</td><td class="ph">054-794-5767</td></tr>
+          <tr><td>מטפים</td><td>Paragon</td><td class="ph">052-802-3512</td></tr>
+          <tr><td>בקרת בניין – שלמה A + חרמון</td><td>Lead Bakara</td><td class="ph">03-977-5520</td></tr>
+          <tr><td>בקרת בניין – IBC + שלמה B</td><td>Zivan (דרך CBRE)</td><td class="ph">052-681-1983</td></tr>
+          <tr><td>מיזוג אוויר (HVAC)</td><td>Electra</td><td class="ph">04-846-1814</td></tr>
+          <tr><td>חשמל (חברת חשמל)</td><td>IEC</td><td class="ph">103</td></tr>
+          <tr><td>גז</td><td>Koraz Energy</td><td class="ph">054-242-3100</td></tr>
+          <tr><td>מים</td><td>מעיינות העמקים</td><td class="ph">04-856-9696</td></tr>
+          <tr><td>ניקוי שפך חמ"ס</td><td>טאביב</td><td class="ph">1800-671-671</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    NVIDIA Israel &nbsp;·&nbsp; קמפוס יקנעם – הקידמה 26/28 ו-התנועה 3, יקנעם עילית &nbsp;·&nbsp; SOP-IL-YOK-001 Rev. A &nbsp;·&nbsp; יוני 2026<br>
+    מסמך פנימי לשימוש תפעולי – לביטחון, ERT ו-CBRE בלבד
+  </div>
+
+</div>
+
+<script>
+var activeId = null;
+function showScenario(id, cardEl) {
+  document.querySelectorAll('.scenario-detail').forEach(function(d){ d.classList.remove('active'); });
+  document.querySelectorAll('.scenario-card').forEach(function(c){ c.classList.remove('active'); });
+  if (activeId === id) { activeId = null; return; }
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    cardEl.classList.add('active');
+    activeId = id;
+    setTimeout(function(){ el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+  }
+}
+</script>
+</body>
+</html>

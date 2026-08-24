@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency SOP – NVIDIA Zurich</title>
+  <link rel="apple-touch-icon" href="sop_icon_192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="sop_icon_512.png">
+  <style>
+    :root {
+      --nvg: #76B900;
+      --nvg-dk: #4F7C00;
+      --nvg-lt: #EFF7DE;
+      --ink: #111111;
+      --dark: #1A1A1A;
+      --mid: #555550;
+      --grey: #888883;
+      --light: #F5F5F0;
+      --border: #DDDDD8;
+      --warn: #C85000;
+      --alert: #C00000;
+      --info: #1A6A9A;
+      --info-lt: #EEF5FA;
+      --white: #FFFFFF;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--light); color: var(--ink); font-size: 14px; }
+
+    /* NAV */
+    .nav { position: sticky; top: 0; z-index: 100; background: var(--dark); display: flex; align-items: center; padding: 0 12px; height: 46px; gap: 6px; overflow-x: auto; }
+    .nav-logo { color: var(--nvg); font-weight: 900; font-size: 15px; letter-spacing: .5px; white-space: nowrap; margin-right: 8px; }
+    .nav a { color: #CCC; text-decoration: none; font-size: 12px; white-space: nowrap; padding: 4px 8px; border-radius: 4px; }
+    .nav a:active { background: var(--nvg); color: #FFF; }
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, var(--dark) 0%, #2a2a2a 100%); color: var(--white); padding: 18px 16px 14px; border-bottom: 3px solid var(--nvg); }
+    .hero-title { font-size: 20px; font-weight: 900; letter-spacing: .3px; }
+    .hero-sub { font-size: 12px; color: #AAA; margin-top: 3px; }
+    .hero-badge { display: inline-block; background: var(--nvg); color: #FFF; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-top: 6px; letter-spacing: .5px; }
+
+    /* ALERT BANNER */
+    .alert-banner { background: #fff3cd; border-left: 4px solid #C85000; padding: 9px 14px; font-size: 12px; font-weight: 600; color: #7a4000; }
+
+    /* SECTION */
+    .section-title { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--nvg-dk); padding: 12px 14px 6px; }
+    .st-icon { color: var(--nvg); font-size: 9px; }
+
+    /* CONTACTS */
+    .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 10px; }
+    .contact-card { background: var(--white); border-radius: 8px; border: 1px solid var(--border); padding: 10px 11px; }
+    .contact-card.full { grid-column: 1 / -1; }
+    .cc-role { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--mid); letter-spacing: .4px; }
+    .cc-name { font-size: 13px; font-weight: 700; margin: 2px 0; }
+    .cc-phone { font-size: 14px; font-weight: 800; color: var(--alert); font-family: monospace; }
+    .cc-email { font-size: 10px; color: var(--info); }
+
+    /* QUICK-DIAL TABLE */
+    .quick-table { width: calc(100% - 20px); margin: 0 10px; background: var(--white); border-radius: 8px; border: 1px solid var(--border); border-collapse: separate; border-spacing: 0; overflow: hidden; }
+    .quick-table td { padding: 7px 11px; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .quick-table tr:last-child td { border-bottom: none; }
+    .quick-table td.role { color: var(--mid); font-size: 12px; }
+    .quick-table td.phone { font-family: monospace; font-weight: 800; color: var(--alert); text-align: right; }
+    .quick-table td.sep { background: var(--dark); color: #AAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; padding: 5px 11px; }
+
+    /* SCENARIO CARDS */
+    .scenarios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 10px; }
+    .scenario-card { background: var(--white); border-radius: 10px; border: 1px solid var(--border); padding: 14px 12px; cursor: pointer; transition: box-shadow .15s; border-top: 3px solid var(--nvg); text-align: center; }
+    .scenario-card:active { box-shadow: 0 2px 10px rgba(0,0,0,.15); }
+    .sc-icon { font-size: 28px; display: block; margin-bottom: 5px; }
+    .sc-label { font-size: 12px; font-weight: 700; color: var(--ink); }
+    .sc-hint { font-size: 10px; color: var(--mid); margin-top: 2px; }
+
+    /* SCENARIO DETAIL */
+    .scenario-detail { display: none; background: var(--white); border-radius: 10px; border: 1px solid var(--border); margin: 6px 10px 0; padding: 14px; }
+    .scenario-detail.active { display: block; }
+    .scenario-detail h3 { font-size: 15px; font-weight: 800; margin-bottom: 10px; }
+    .steps { list-style: none; }
+    .steps li { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 9px; font-size: 13px; line-height: 1.5; }
+    .sn { min-width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #FFF; flex-shrink: 0; margin-top: 1px; }
+    .sn-green { background: var(--nvg); }
+    .sn-orange { background: var(--warn); }
+    .sn-red { background: var(--alert); }
+    .note-box { margin-top: 10px; padding: 8px 12px; background: var(--nvg-lt); border-left: 3px solid var(--nvg); border-radius: 6px; font-size: 12px; }
+
+    /* CARDS */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 10px; }
+    .card { background: var(--white); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
+    .card-header { padding: 8px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; }
+    .hd-warn { background: #FFF3E0; color: var(--warn); }
+    .hd-dark { background: var(--dark); color: var(--white); }
+    .hd-green { background: var(--nvg-lt); color: var(--nvg-dk); }
+    .card-body { padding: 10px 12px; }
+
+    /* ROLES TABLE */
+    .roles-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .roles-table thead tr { background: var(--dark); color: #FFF; }
+    .roles-table thead th { padding: 7px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; }
+    .roles-table tbody tr { border-bottom: 1px solid var(--border); }
+    .roles-table tbody tr:last-child { border-bottom: none; }
+    .roles-table td { padding: 8px 10px; vertical-align: top; }
+    .roles-table td.rn { font-weight: 700; font-size: 11px; color: var(--nvg-dk); white-space: nowrap; }
+    .card-body-flush { overflow-x: auto; }
+
+    /* FOOTER */
+    .footer { text-align: center; font-size: 10px; color: var(--grey); padding: 18px 14px 30px; border-top: 1px solid var(--border); margin-top: 16px; }
+    .footer strong { color: var(--nvg); }
+
+    /* SPACING HELPERS */
+    .pad { padding: 0 10px; }
+    .mt8 { margin-top: 8px; }
+    .mb12 { margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <span class="nav-logo">⚡ NVIDIA</span>
+    <a href="#contacts">Contacts</a>
+    <a href="#scenarios">Scenarios</a>
+    <a href="#roles">Roles</a>
+    <a href="#equipment">Equipment</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title">🇨🇭 Emergency SOP</div>
+    <div class="hero-sub">Europaallee 39, 8004 Zurich · 3rd & 4th Floor</div>
+    <div class="hero-badge">ALWAYS SAVE TO HOME SCREEN — NO INTERNET NEEDED</div>
+  </div>
+
+  <!-- ALERT -->
+  <div class="alert-banner">
+    🚨 IN AN EMERGENCY — CALL 112 (generic) or specific services below
+  </div>
+
+  <!-- QUICK DIAL -->
+  <div id="contacts">
+    <div class="section-title"><span class="st-icon">▶</span> Emergency Numbers</div>
+    <table class="quick-table">
+      <tr><td class="sep" colspan="2">Switzerland Emergency Services</td></tr>
+      <tr><td class="role">🔥 Fire</td><td class="phone">118</td></tr>
+      <tr><td class="role">🚑 Ambulance</td><td class="phone">144</td></tr>
+      <tr><td class="role">👮 Police</td><td class="phone">117</td></tr>
+      <tr><td class="role">🆘 Generic Emergency</td><td class="phone">112</td></tr>
+      <tr><td class="sep" colspan="2">Hospitals</td></tr>
+      <tr><td class="role">🏥 Unispital Zürich</td><td class="phone">044 255 11 11</td></tr>
+      <tr><td class="role">🏥 Permanence am Bahnhof (walk-in)</td><td class="phone">044 215 44 44</td></tr>
+      <tr><td class="sep" colspan="2">NVIDIA Internal</td></tr>
+      <tr><td class="role">RSOC 24/7 (Primary)</td><td class="phone">+972 74-723-6000</td></tr>
+      <tr><td class="role">SIOC 24/7 (Security)</td><td class="phone">+1 408 486 4000</td></tr>
+      <tr><td class="role">Site Leader – Adam Moravanszky</td><td class="phone">+41 79 843 14 35</td></tr>
+      <tr><td class="role">Safety Officer – Catherine Luke</td><td class="phone">+41 79 810 81 32</td></tr>
+      <tr><td class="role">Safety Officer – Elsje Du Preez</td><td class="phone">+41 79 377 06 80</td></tr>
+      <tr><td class="role">IT – Victor Echem</td><td class="phone">+41 79 546 19 64</td></tr>
+      <tr><td class="sep" colspan="2">Facility / Building</td></tr>
+      <tr><td class="role">Leonteq – Fabian Muff (EN)</td><td class="phone">+41 79 544 78 74</td></tr>
+      <tr><td class="role">Leonteq – Franco Scandella</td><td class="phone">+41 79 962 44 98</td></tr>
+      <tr><td class="role">Securitas (next door, Eur.41)</td><td class="phone">+41 58 800 12 78</td></tr>
+    </table>
+  </div>
+
+  <!-- KEY CONTACTS CARDS -->
+  <div class="section-title" style="margin-top:14px"><span class="st-icon">▶</span> Key Site Contacts</div>
+  <div class="contacts-grid">
+    <div class="contact-card">
+      <div class="cc-role">Site Leader / IC</div>
+      <div class="cc-name">Adam Moravanszky</div>
+      <div class="cc-phone">+41 79 843 14 35</div>
+      <div class="cc-email">amoravanszky@nvidia.com</div>
+    </div>
+    <div class="contact-card">
+      <div class="cc-role">IC Backup</div>
+      <div class="cc-name">Marco Foco</div>
+      <div class="cc-phone">+41 79 303 72 79</div>
+      <div class="cc-email">mfoco@nvidia.com</div>
+    </div>
+    <div class="contact-card">
+      <div class="cc-role">Safety Officer / Office Manager</div>
+      <div class="cc-name">Catherine Luke</div>
+      <div class="cc-phone">+41 79 810 81 32</div>
+      <div class="cc-email">cluke@nvidia.com</div>
+    </div>
+    <div class="contact-card">
+      <div class="cc-role">Safety Officer / Office Manager</div>
+      <div class="cc-name">Elsje Du Preez</div>
+      <div class="cc-phone">+41 79 377 06 80</div>
+      <div class="cc-email">Edupreez@nvidia.com</div>
+    </div>
+    <div class="contact-card">
+      <div class="cc-role">IC Backup</div>
+      <div class="cc-name">Simon Schirm</div>
+      <div class="cc-phone">⚠️ Check ERP</div>
+      <div class="cc-email">sschirm@nvidia.com</div>
+    </div>
+    <div class="contact-card">
+      <div class="cc-role">IT Manager</div>
+      <div class="cc-name">Victor Echem</div>
+      <div class="cc-phone">+41 79 546 19 64</div>
+      <div class="cc-email">Vechem@nvidia.com</div>
+    </div>
+  </div>
+
+  <!-- SCENARIOS -->
+  <div id="scenarios">
+    <div class="section-title" style="margin-top:16px"><span class="st-icon">▶</span> Emergency Scenarios — Tap to expand</div>
+    <div class="scenarios-grid">
+      <div class="scenario-card" onclick="toggle('fire')" style="border-top-color:#C00000">
+        <span class="sc-icon">🔥</span>
+        <div class="sc-label">Fire</div>
+        <div class="sc-hint">Alarm · Evacuation</div>
+      </div>
+      <div class="scenario-card" onclick="toggle('medical')" style="border-top-color:#C85000">
+        <span class="sc-icon">🚑</span>
+        <div class="sc-label">Medical</div>
+        <div class="sc-hint">First Aid · AED</div>
+      </div>
+      <div class="scenario-card" onclick="toggle('security')" style="border-top-color:#8B0000">
+        <span class="sc-icon">🔒</span>
+        <div class="sc-label">Security Threat</div>
+        <div class="sc-hint">Run · Hide · Fight</div>
+      </div>
+      <div class="scenario-card" onclick="toggle('utility')" style="border-top-color:var(--nvg)">
+        <span class="sc-icon">⚡</span>
+        <div class="sc-label">Utility Disruption</div>
+        <div class="sc-hint">Power · Internet</div>
+      </div>
+      <div class="scenario-card" onclick="toggle('elevator')" style="border-top-color:#888">
+        <span class="sc-icon">🛗</span>
+        <div class="sc-label">Elevator Emergency</div>
+        <div class="sc-hint">Entrapment</div>
+      </div>
+      <div class="scenario-card" onclick="toggle('assembly')" style="border-top-color:var(--info)">
+        <span class="sc-icon">📍</span>
+        <div class="sc-label">Assembly Point</div>
+        <div class="sc-hint">Kasernenareal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIRE -->
+  <div id="fire" class="scenario-detail" style="border-top-color:#C00000">
+    <h3>🔥 Fire / Fire Alarm</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div>On discovering fire: activate nearest <strong>pull station</strong> immediately — do NOT fight the fire unless trained and safe to do so</div></li>
+      <li><div class="sn sn-red">2</div><div>Notify Site Leader Adam Moravanszky: <strong>+41 79 843 14 35</strong> | Catherine Luke: <strong>+41 79 810 81 32</strong> | Elsje Du Preez: <strong>+41 79 377 06 80</strong></div></li>
+      <li><div class="sn sn-red">3</div><div><strong>Evacuate immediately</strong> via nearest emergency staircase — do NOT use lifts. Close doors behind you.</div></li>
+      <li><div class="sn sn-red">4</div><div>Building sweep team performs floor sweep — last to leave. Confirm all rooms clear.</div></li>
+      <li><div class="sn sn-red">5</div><div>Proceed to assembly area: <strong>Kasernenareal</strong> (behind building, across 2 roads). Stay together for headcount.</div></li>
+      <li><div class="sn sn-red">6</div><div>IC reports status to RSOC: <strong>+972 74-723-6000</strong>. Do NOT re-enter until Fire Brigade declares All Clear.</div></li>
+    </ul>
+    <div class="note-box">🧯 CO2 fire extinguishers are located throughout the floor. AED is on the wall near the ERT corner (3rd floor) and in the 4th floor nursing room.</div>
+  </div>
+
+  <!-- MEDICAL -->
+  <div id="medical" class="scenario-detail" style="border-top-color:#C85000">
+    <h3>🚑 Medical Emergency</h3>
+    <ul class="steps">
+      <li><div class="sn sn-orange">1</div><div>Call ambulance: <strong>144</strong> immediately. Provide: location (Europaallee 39, 3rd/4th floor), nature of emergency, your name.</div></li>
+      <li><div class="sn sn-orange">2</div><div>Notify Site Leader Adam Moravanszky: <strong>+41 79 843 14 35</strong> | Catherine Luke: <strong>+41 79 810 81 32</strong> | Elsje Du Preez: <strong>+41 79 377 06 80</strong></div></li>
+      <li><div class="sn sn-orange">3</div><div>First Aiders: retrieve <strong>First Aid Kit + AED</strong> from ERT corner (3rd floor, behind OM desk) or 4th floor nursing room</div></li>
+      <li><div class="sn sn-orange">4</div><div>Send someone to building entrance to guide paramedics directly to the person</div></li>
+      <li><div class="sn sn-orange">5</div><div>Clear area of non-essential people. Maintain privacy and dignity of affected person.</div></li>
+      <li><div class="sn sn-orange">6</div><div>IC reports to RSOC: <strong>+972 74-723-6000</strong>. Complete incident report within 24 hours.</div></li>
+    </ul>
+    <div style="margin-top:10px;padding:10px 14px;background:var(--info-lt);border:1px solid #B0CCE0;border-left:3px solid var(--info);border-radius:6px;font-size:12px">
+      <strong>Nearest hospital:</strong> Unispital Zürich — Rämistrasse 100, 8091 Zurich — <strong>044 255 11 11</strong><br>
+      <strong>Walk-in clinic:</strong> Permanence am Bahnhof — <strong>044 215 44 44</strong>
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div id="security" class="scenario-detail" style="border-top-color:#8B0000">
+    <h3>🔒 Security Threat / Hostile Intruder</h3>
+    <div style="padding:8px 12px;background:#fdf3f3;border:1px solid #e0b0b0;border-left:3px solid #8B0000;border-radius:6px;font-size:12px;margin-bottom:10px">
+      👮 <strong>Securitas security</strong> is stationed next door at Europaallee 41 — available 24/7.
+    </div>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div>Call Police immediately: <strong>117</strong> — provide location and description of threat</div></li>
+      <li><div class="sn sn-red">2</div><div><strong style="color:var(--alert)">RUN</strong> — if a safe escape route exists, evacuate immediately. Leave all belongings.</div></li>
+      <li><div class="sn sn-red">3</div><div><strong style="color:var(--warn)">HIDE</strong> — lock/barricade doors, silence phones, turn off lights, stay low and out of sight</div></li>
+      <li><div class="sn sn-red">4</div><div><strong style="color:#8B0000">FIGHT</strong> — as an absolute last resort only</div></li>
+      <li><div class="sn sn-red">5</div><div>SEC reports to RSOC: <strong>+972 74-723-6000</strong> | SIOC: <strong>+1 408 486 4000</strong> | Contact Securitas: <strong>+41 79 544 78 74</strong></div></li>
+      <li><div class="sn sn-red">6</div><div>Do NOT open doors until Police confirms the building is clear</div></li>
+    </ul>
+  </div>
+
+  <!-- UTILITY -->
+  <div id="utility" class="scenario-detail" style="border-top-color:var(--nvg)">
+    <h3>⚡ Utility Disruption</h3>
+    <ul class="steps">
+      <li><div class="sn sn-green">1</div><div>Notify Site Leader Adam Moravanszky: <strong>+41 79 843 14 35</strong> | Catherine Luke: <strong>+41 79 810 81 32</strong> | Elsje Du Preez: <strong>+41 79 377 06 80</strong></div></li>
+      <li><div class="sn sn-green">2</div><div><strong>Power outage:</strong> Contact Leonteq Facility Management — Fabian Muff: <strong>+41 79 544 78 74</strong> | Franco Scandella: <strong>+41 79 962 44 98</strong></div></li>
+      <li><div class="sn sn-green">3</div><div><strong>Internet outage:</strong> Contact IT Manager Victor Echem: <strong>+41 79 546 19 64</strong></div></li>
+      <li><div class="sn sn-green">4</div><div><strong>Heating/Cooling:</strong> Contact Stivo: <strong>+41 41 260 37 30</strong> or Klinova: <strong>+41 44 350 70 75</strong></div></li>
+      <li><div class="sn sn-green">5</div><div><strong>Electrical:</strong> Contact Burkhalter: <strong>+41 44 432 11 11</strong></div></li>
+      <li><div class="sn sn-green">6</div><div>Notify RSOC: <strong>+972 74-723-6000</strong> if extended disruption affects business continuity</div></li>
+    </ul>
+  </div>
+
+  <!-- ELEVATOR -->
+  <div id="elevator" class="scenario-detail" style="border-top-color:#888">
+    <h3>🛗 Elevator Emergency / Entrapment</h3>
+    <ul class="steps">
+      <li><div class="sn sn-green">1</div><div>Press the <strong>alarm button</strong> inside the elevator — this alerts building management directly</div></li>
+      <li><div class="sn sn-green">2</div><div>Call Leonteq Facility Management: Fabian Muff <strong>+41 79 544 78 74</strong> | Franco Scandella <strong>+41 79 962 44 98</strong></div></li>
+      <li><div class="sn sn-green">3</div><div>Notify Site Leader Adam Moravanszky: <strong>+41 79 843 14 35</strong> or Catherine / Elsje</div></li>
+      <li><div class="sn sn-green">4</div><div>Stay calm — do NOT attempt to force open doors. Remain in elevator until rescue is confirmed.</div></li>
+      <li><div class="sn sn-green">5</div><div>If medical assistance needed after rescue, call Ambulance: <strong>144</strong></div></li>
+    </ul>
+    <div class="note-box">⚠️ During fire alarm: do NOT use elevators — use emergency staircases only.</div>
+  </div>
+
+  <!-- ASSEMBLY -->
+  <div id="assembly" class="scenario-detail" style="border-top-color:var(--info)">
+    <h3>📍 Assembly Point</h3>
+    <ul class="steps">
+      <li><div class="sn sn-green">1</div><div>Exit via nearest emergency staircase. Do NOT use lifts.</div></li>
+      <li><div class="sn sn-green">2</div><div>Proceed to: <strong>Kasernenareal</strong> — behind the building, across 2 roads</div></li>
+      <li><div class="sn sn-green">3</div><div>IC / Safety Officers conduct headcount. Report any missing persons immediately.</div></li>
+      <li><div class="sn sn-green">4</div><div>Remain at assembly point until IC declares <strong>All Clear</strong>. Do NOT re-enter the building without authorization.</div></li>
+    </ul>
+    <div class="note-box">📍 <strong>Kasernenareal</strong> — Go behind the building and cross 2 roads. Follow evacuation maps posted on all floors.</div>
+  </div>
+
+  <!-- EQUIPMENT CARDS -->
+  <div id="equipment">
+    <div class="section-title" style="margin-top:14px"><span class="st-icon">▶</span> Equipment & Hospital</div>
+  </div>
+  <div class="grid-2" style="margin-top:4px">
+    <div class="card">
+      <div class="card-header hd-warn">🧰 &nbsp;ERT Corner (3rd Floor)</div>
+      <div class="card-body" style="font-size:13px;color:var(--mid);line-height:1.9">
+        📍 <strong>Behind OM Desk</strong><br>
+        🩹 First Aid / Trauma Kit<br>
+        💛 High-visibility vests<br>
+        ❤️ AED (on wall near corner)<br>
+        🧯 CO2 extinguishers (throughout)<br>
+        <br>
+        📍 <strong>4th Floor – Nursing Room</strong><br>
+        🩹 First Aid Kit + AED
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header hd-dark">🏥 &nbsp;Nearest Hospital</div>
+      <div class="card-body">
+        <div style="font-size:13px;font-weight:800;margin-bottom:4px">Unispital Zürich</div>
+        <div style="font-size:12px;color:var(--mid);margin-bottom:6px">📍 Rämistrasse 100, 8091 Zurich</div>
+        <div style="font-size:13px;font-weight:700;color:var(--alert)">☎️ 044 255 11 11</div>
+        <div style="margin-top:8px;font-size:12px;font-weight:700">Permanence am Bahnhof</div>
+        <div style="font-size:11px;color:var(--mid)">Walk-in GP clinic</div>
+        <div style="font-size:13px;font-weight:700;color:var(--alert)">☎️ 044 215 44 44</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--mid)">🚑 Ambulance: <strong style="color:var(--alert)">144</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROLES TABLE -->
+  <div id="roles">
+    <div class="section-title" style="margin-top:18px"><span class="st-icon">▶</span> Emergency Roles</div>
+  </div>
+  <div class="card" style="margin: 0 10px 14px;">
+    <div class="card-body-flush">
+      <table class="roles-table">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>Person / Contact</th>
+            <th>Primary Responsibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rn">Site Leader / IC</td>
+            <td>Adam Moravanszky<br><span style="font-family:monospace;color:var(--alert)">+41 79 843 14 35</span><br><span style="font-size:11px;color:var(--mid)">amoravanszky@nvidia.com</span></td>
+            <td>Overall command during emergencies. Main contact between site and NVIDIA corporate. Declares evacuation and All Clear.</td>
+          </tr>
+          <tr>
+            <td class="rn">Safety Officer / Office Manager</td>
+            <td>Catherine Luke<br><span style="font-family:monospace;color:var(--alert)">+41 79 810 81 32</span><br><span style="font-size:11px;color:var(--mid)">cluke@nvidia.com</span></td>
+            <td>Leads emergency response, floor sweep, headcount, RSOC communication. Maintains Emergency Kit and ERP.</td>
+          </tr>
+          <tr>
+            <td class="rn">Safety Officer / Office Manager</td>
+            <td>Elsje Du Preez<br><span style="font-family:monospace;color:var(--alert)">+41 79 377 06 80</span><br><span style="font-size:11px;color:var(--mid)">Edupreez@nvidia.com</span></td>
+            <td>Supports emergency response, floor sweep, headcount, RSOC communication. Maintains Emergency Kit and ERP.</td>
+          </tr>
+          <tr>
+            <td class="rn">IC Backup</td>
+            <td>Marco Foco<br><span style="font-family:monospace;color:var(--alert)">+41 79 303 72 79</span><br><span style="font-size:11px;color:var(--mid)">mfoco@nvidia.com</span></td>
+            <td>Acts as IC if Site Leader is absent.</td>
+          </tr>
+          <tr>
+            <td class="rn">IC Backup</td>
+            <td>Simon Schirm<br><span style="font-size:11px;color:var(--mid)">sschirm@nvidia.com</span></td>
+            <td>Acts as IC if Site Leader and primary backup are absent.</td>
+          </tr>
+          <tr>
+            <td class="rn">IT Manager</td>
+            <td>Victor Echem<br><span style="font-family:monospace;color:var(--alert)">+41 79 546 19 64</span><br><span style="font-size:11px;color:var(--mid)">Vechem@nvidia.com</span></td>
+            <td>IT systems, network continuity, NER room management during disruptions.</td>
+          </tr>
+          <tr>
+            <td class="rn">Lab Manager</td>
+            <td>Lionel Gulich<br><span style="font-size:11px;color:var(--mid)">lgulich@nvidia.com</span></td>
+            <td>Lab safety and equipment shutdown during emergencies.</td>
+          </tr>
+          <tr>
+            <td class="rn">NV Facilities</td>
+            <td>Yana Pisareva<br><span style="font-size:11px;color:var(--mid)">ypisareva@nvidia.com</span></td>
+            <td>Facilities coordination and vendor liaison.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <strong>NVIDIA Zurich — Emergency SOP</strong><br>
+    EHS-SOP-CHE-001 Rev. A · August 2026<br>
+    Questions? Contact <strong>ibarak@nvidia.com</strong>
+  </div>
+
+  <script>
+    function toggle(id) {
+      const el = document.getElementById(id);
+      const isActive = el.classList.contains('active');
+      document.querySelectorAll('.scenario-detail').forEach(d => d.classList.remove('active'));
+      if (!isActive) {
+        el.classList.add('active');
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }
+    }
+  </script>
+
+</body>
+</html>

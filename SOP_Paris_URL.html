@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency SOP | NVIDIA Paris (Courbevoie)</title>
+<style>
+  :root {
+    --nvg: #76B900;
+    --nvg-dk: #4F7C00;
+    --nvg-lt: #EFF7DE;
+    --ink: #111111;
+    --dark: #1A1A1A;
+    --mid: #555550;
+    --grey: #888883;
+    --rule: #E0E0DC;
+    --bg: #F8F8F6;
+    --white: #FFFFFF;
+    --card-bg: #FFFFFF;
+    --warn: #C45000;
+    --warn-lt: #FFF3EC;
+    --alert: #A80000;
+    --alert-lt: #FFF0F0;
+    --info: #1D4E6B;
+    --info-lt: #EEF4F8;
+    --radius: 8px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
+    --shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    direction: ltr;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .top-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 24px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    flex-wrap: wrap; gap: 8px;
+  }
+  .top-bar-left { display: flex; align-items: center; gap: 14px; }
+  .nvlogo { font-size: 17px; font-weight: 900; letter-spacing: -0.5px; color: var(--dark); }
+  .nvlogo span { color: var(--nvg); }
+  .top-bar .divider { width: 1px; height: 18px; background: var(--rule); }
+  .top-bar .doc-title { font-size: 12px; color: var(--grey); font-weight: 500; }
+  .badge {
+    background: var(--nvg-lt); color: var(--nvg-dk);
+    border: 1px solid #C5E080;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  }
+  .badge-draft {
+    background: var(--alert-lt); color: var(--alert);
+    border: 1px solid #FFCCCC;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  }
+
+  .green-stripe { height: 3px; background: linear-gradient(to right, var(--nvg), #5A9000); }
+
+  .main { max-width: 980px; margin: 0 auto; padding: 20px 16px 48px; }
+
+  .hero {
+    background: var(--white); border: 1px solid var(--rule);
+    border-radius: var(--radius); padding: 18px 22px;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 18px;
+    box-shadow: var(--shadow); border-left: 4px solid var(--nvg);
+  }
+  .hero-icon { font-size: 28px; flex-shrink: 0; }
+  .hero-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: var(--grey); text-transform: uppercase; margin-bottom: 3px; }
+  .hero-assembly { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+  .hero-never {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--alert-lt); color: var(--alert);
+    border: 1px solid #FFCCCC; border-radius: 5px;
+    padding: 4px 10px; font-size: 12px; font-weight: 700;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card-bg); border: 1px solid var(--rule);
+    border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+  }
+  .card-header {
+    padding: 10px 14px; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 7px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .card-body { padding: 14px; }
+  .card-body-flush { padding: 0; }
+
+  .hd-green { background: var(--nvg); color: white; border-bottom: none; }
+  .hd-dark  { background: var(--dark); color: white; border-bottom: none; }
+  .hd-info  { background: var(--info); color: white; border-bottom: none; }
+  .hd-alert { background: var(--alert-lt); color: var(--alert); border-bottom-color: #FFCCCC; }
+
+  .contacts-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .contacts-table tr:nth-child(even) { background: var(--bg); }
+  .contacts-table td { padding: 7px 12px; border-bottom: 1px solid var(--rule); }
+  .contacts-table tr:last-child td { border-bottom: none; }
+  .contacts-table .phone { font-weight: 800; color: var(--alert); font-size: 13px; white-space: nowrap; font-family: monospace; }
+  .contacts-table .role { font-weight: 600; color: var(--info); }
+  .contacts-table .sep { background: var(--info-lt); font-size: 10px; font-weight: 700; color: var(--info); padding: 5px 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  .building-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .binfo {
+    background: var(--bg); border-radius: 6px;
+    padding: 8px 10px; border-left: 2px solid var(--nvg);
+  }
+  .binfo-label { font-size: 10px; color: var(--grey); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .binfo-val { font-size: 13px; font-weight: 700; color: var(--dark); margin-top: 2px; }
+
+  .floors { display: flex; gap: 8px; margin-top: 10px; }
+  .floor-box { flex: 1; border-radius: 7px; padding: 10px; text-align: center; border: 1.5px solid; }
+  .floor-box.f6 { border-color: var(--nvg); background: var(--nvg-lt); }
+  .floor-box .fl-id { font-size: 22px; font-weight: 900; }
+  .floor-box.f6 .fl-id { color: var(--nvg-dk); }
+  .floor-box .fl-note { font-size: 11px; color: var(--mid); margin-top: 3px; }
+
+  .never-strip {
+    background: var(--warn-lt); color: var(--warn);
+    border: 1px solid #F0C8A0; border-radius: 6px;
+    padding: 7px 12px; display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700; margin-top: 10px;
+  }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; color: var(--dark);
+    margin: 20px 0 10px; display: flex; align-items: center; gap: 8px;
+    padding-bottom: 6px; border-bottom: 2px solid var(--nvg);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .section-title .st-icon { color: var(--nvg); }
+
+  .key-people { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+  .person-chip {
+    background: var(--bg); border-radius: 6px; padding: 8px 10px;
+    border-left: 2px solid var(--nvg); font-size: 12px;
+  }
+  .person-chip .pc-name { font-weight: 700; color: var(--dark); }
+  .person-chip .pc-role { color: var(--mid); font-size: 11px; margin-top: 2px; }
+
+  .evac-flow { display: flex; flex-direction: column; gap: 4px; }
+  .evac-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border-radius: 7px;
+    font-size: 13px; font-weight: 600;
+    background: var(--white); border: 1px solid var(--rule);
+  }
+  .evac-step .e-num {
+    background: var(--nvg); color: white; border-radius: 50%;
+    width: 24px; height: 24px; min-width: 24px;
+    font-size: 11px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .evac-step .e-title { font-weight: 700; color: var(--dark); }
+  .evac-step .e-sub { font-size: 11.5px; font-weight: 400; margin-top: 2px; color: var(--mid); }
+  .es1 { border-left: 3px solid var(--alert); }
+  .es2 { border-left: 3px solid var(--warn); }
+  .es3 { border-left: 3px solid var(--info); }
+  .es4 { border-left: 3px solid var(--nvg); }
+  .es5 { border-left: 3px solid var(--warn); }
+  .es6 { border-left: 3px solid var(--nvg); }
+  .evac-arrow { text-align: center; color: var(--rule); font-size: 12px; padding: 1px 0; }
+
+  .dis-note {
+    background: #FFFBEE; border: 1px solid #EEE0A0; border-left: 3px solid #D4A000;
+    padding: 10px 14px; border-radius: 6px; font-size: 12.5px; margin-top: 10px; line-height: 1.6; color: var(--mid);
+  }
+
+  .scenarios { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .scenario-card {
+    border-radius: 8px; padding: 12px 14px; flex: 1; min-width: 110px; cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s; text-align: center; user-select: none;
+    background: var(--white); border: 1.5px solid var(--rule); box-shadow: var(--shadow);
+  }
+  .scenario-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .scenario-card.active { border-color: var(--nvg); box-shadow: 0 0 0 2px var(--nvg-lt); }
+  .scenario-card .s-icon { font-size: 24px; }
+  .scenario-card .s-title { font-size: 12px; font-weight: 700; margin-top: 4px; color: var(--dark); }
+  .scenario-card .s-sub { font-size: 10.5px; margin-top: 2px; color: var(--grey); }
+  .scenario-card .s-tag {
+    display: inline-block; margin-top: 5px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.3px; padding: 2px 7px; border-radius: 4px;
+  }
+  .tag-red    { background: var(--alert-lt); color: var(--alert); }
+  .tag-orange { background: var(--warn-lt); color: var(--warn); }
+  .tag-blue   { background: var(--info-lt); color: var(--info); }
+  .tag-green  { background: var(--nvg-lt); color: var(--nvg-dk); }
+  .tag-purple { background: #F5F0FF; color: #6B21A8; }
+  .tag-teal   { background: #F0FAF5; color: #0D6B3A; }
+
+  .scenario-detail {
+    display: none; background: var(--white); border: 1px solid var(--rule);
+    border-radius: var(--radius); padding: 18px 20px; margin-bottom: 14px;
+    border-top: 3px solid var(--nvg); box-shadow: var(--shadow);
+  }
+  .scenario-detail.active { display: block; }
+  .scenario-detail h3 { font-size: 14px; color: var(--dark); margin-bottom: 12px; font-weight: 800; }
+
+  .steps { list-style: none; }
+  .steps li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--rule);
+    font-size: 13px; line-height: 1.55;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .sn {
+    border-radius: 50%; width: 22px; height: 22px; min-width: 22px;
+    font-size: 10px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    color: white; margin-top: 1px; flex-shrink: 0;
+  }
+  .sn-red    { background: var(--alert); }
+  .sn-orange { background: var(--warn); }
+  .sn-blue   { background: var(--info); }
+  .sn-green  { background: var(--nvg); }
+  .sn-purple { background: #6B21A8; }
+
+  .roles-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .roles-table th {
+    background: var(--dark); color: white; padding: 9px 12px;
+    text-align: left; font-weight: 600; font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase;
+  }
+  .roles-table td { padding: 8px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .roles-table tr:last-child td { border-bottom: none; }
+  .roles-table tr:nth-child(even) td { background: var(--bg); }
+  .roles-table .rn { font-weight: 700; color: var(--info); }
+
+  .aed-box {
+    background: var(--nvg-lt); border: 1px solid #C5E080;
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px; margin-top: 10px;
+  }
+  .aed-icon { font-size: 28px; }
+  .aed-title { font-size: 13px; font-weight: 800; color: var(--nvg-dk); }
+  .aed-loc { font-size: 12px; color: var(--mid); margin-top: 2px; }
+
+  .note-box {
+    background: var(--warn-lt); border: 1px solid #F0C8A0; border-left: 3px solid var(--warn);
+    border-radius: 6px; padding: 10px 14px; font-size: 12px; margin-top: 10px; line-height: 1.6;
+  }
+  .note-box-alert {
+    background: var(--alert-lt); border: 1px solid #FFCCCC; border-left: 3px solid var(--alert);
+    border-radius: 6px; padding: 10px 14px; font-size: 12px; margin-top: 10px; line-height: 1.6; font-weight: 600; color: var(--alert);
+  }
+
+  .footer {
+    text-align: center; color: var(--grey); font-size: 11px;
+    padding: 18px; border-top: 1px solid var(--rule); margin-top: 20px; line-height: 1.8;
+  }
+
+  .map-wrap { text-align: center; margin-bottom: 12px; }
+  .map-wrap svg { width: 100%; max-width: 480px; border-radius: 8px; border: 1px solid var(--rule); }
+  .map-note {
+    background: #F0FAF5; border: 1px solid #A8D8B8; border-left: 3px solid #0D6B3A;
+    border-radius: 6px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; line-height: 1.7;
+  }
+  .map-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--nvg); color: white;
+    padding: 9px 18px; border-radius: 7px;
+    text-decoration: none; font-size: 13px; font-weight: 700;
+  }
+  .map-btn:hover { background: var(--nvg-dk); }
+
+  .gaps-list { list-style: none; }
+  .gaps-list li {
+    padding: 9px 0; border-bottom: 1px solid #FFCCCC;
+    font-size: 12.5px; line-height: 1.55;
+  }
+  .gaps-list li:last-child { border-bottom: none; }
+  .gaps-list li strong { color: var(--alert); }
+</style>
+</head>
+<body>
+
+<div class="green-stripe"></div>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="nvlogo">N<span>V</span>IDIA</div>
+    <div class="divider"></div>
+    <div class="doc-title">Emergency SOP &nbsp;·&nbsp; Le Colisée, Bâtiment B, Courbevoie</div>
+  </div>
+  <div class="badge-draft">DRAFT — PENDING SITE REVIEW &nbsp;·&nbsp; SOP-FR-PAR-001</div>
+</div>
+
+<div class="main">
+
+  <!-- DRAFT NOTICE -->
+  <div class="note-box-alert" style="margin-top:16px">
+    ⚠️ This is a first draft built from the site's Emergency Response Plan, risk assessment, and 2024 drill records, in the same structure used for the other EMEA sites. Emily Garfen (Office Manager / Site Safety Officer) to review, confirm and update the items flagged ⚠️ below before this goes live.
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">📍</div>
+    <div>
+      <div class="hero-label">Assembly Point</div>
+      <div class="hero-assembly">Outside the building, in front of the Engie tower</div>
+      <div class="hero-never">⚠️ Please confirm still current and clearly signed</div>
+    </div>
+  </div>
+
+  <!-- CONTACTS + BUILDING -->
+  <div class="grid-2">
+
+    <div class="card">
+      <div class="card-header hd-dark">📞 &nbsp;Emergency Numbers</div>
+      <div class="card-body-flush">
+        <table class="contacts-table">
+          <tr><td class="sep" colspan="2">French Emergency Numbers</td></tr>
+          <tr><td class="role">European Emergency</td><td class="phone">112</td></tr>
+          <tr><td class="role">Police</td><td class="phone">17</td></tr>
+          <tr><td class="role">Ambulance (SAMU)</td><td class="phone">15</td></tr>
+          <tr><td class="role">Fire Brigade (Pompiers)</td><td class="phone">18</td></tr>
+          <tr><td class="sep" colspan="2">NVIDIA Internal</td></tr>
+          <tr><td class="role">RSOC Israel 24/7 (emergency)</td><td class="phone">+972 74-723-6000</td></tr>
+          <tr><td class="role">RSOC Israel 24/7 (non-emergency)</td><td class="phone">+972 74-723-6003/4</td></tr>
+          <tr><td class="sep" colspan="2">Paris Site</td></tr>
+          <tr><td class="role">Site Leader – Serge Palaric ⚠️ name unconfirmed</td><td class="phone">+33 6 73 28 39 52</td></tr>
+          <tr><td class="role">Office Manager / Safety Officer – Emily Garfen</td><td class="phone">+33 6 86 31 78 71</td></tr>
+          <tr><td class="role">IT – Daniel Homolka</td><td class="phone">+49 172 7179961</td></tr>
+          <tr><td class="sep" colspan="2">Facility / Building</td></tr>
+          <tr><td class="role">DALKIA (facilities, 24/7) – Musa Sahin</td><td class="phone">+33 6 22 17 16 91</td></tr>
+          <tr><td class="role">DALKIA 24/7 line (ref D005JFT)</td><td class="phone">+33 810 804 805</td></tr>
+          <tr><td class="role">ISIS Sécurité (24/7)</td><td class="phone">+33 1 43 33 67 55</td></tr>
+          <tr><td class="role">B&amp;C Property Mgmt – Olivia Libercier</td><td class="phone">+33 1 45 00 02 02</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header hd-info">🏢 &nbsp;Building Information</div>
+      <div class="card-body">
+        <div class="building-box">
+          <div class="binfo"><div class="binfo-label">Address</div><div class="binfo-val">10 avenue de l'Arche, 92400 Courbevoie</div></div>
+          <div class="binfo"><div class="binfo-label">Building</div><div class="binfo-val">Le Colisée, Bâtiment B</div></div>
+          <div class="binfo"><div class="binfo-label">NVIDIA Floor</div><div class="binfo-val">6th Floor (single floor)</div></div>
+          <div class="binfo"><div class="binfo-label">Headcount</div><div class="binfo-val">~49</div></div>
+          <div class="binfo"><div class="binfo-label">Landline</div><div class="binfo-val">None — use Office Manager's mobile</div></div>
+          <div class="binfo"><div class="binfo-label">First Aid Kit</div><div class="binfo-val">Confirmed present (2023 EHS review) — exact spot TBC</div></div>
+        </div>
+        <div class="floors">
+          <div class="floor-box f6">
+            <div class="fl-id">6F</div>
+            <div class="fl-note">Only NVIDIA floor on site</div>
+          </div>
+        </div>
+        <div class="never-strip">⚠️ &nbsp;No panic button confirmed on site — please verify</div>
+        <div class="never-strip">⚠️ &nbsp;Elevator emergency call button reported not working (per Jan-2023 EHS review) — status unconfirmed since</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- KEY PEOPLE -->
+  <div class="section-title"><span class="st-icon">▶</span> Key Contacts – Paris Site</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body">
+      <div class="key-people">
+        <div class="person-chip"><div class="pc-name">Serge Palaric ⚠️</div><div class="pc-role">Site Leader / Incident Commander — name on file since 2016; may be outdated (possibly "Julien"?) — confirm with Emily</div></div>
+        <div class="person-chip"><div class="pc-name">Emily Garfen</div><div class="pc-role">Office Manager / Site Safety Officer / IC Backup / Sweep &amp; Assembly Lead</div></div>
+        <div class="person-chip"><div class="pc-name">Evacuation Committee (SST) ⚠️</div><div class="pc-role">6-person team formed 2022, first-aid trained — only Emily currently named in drill records; full roster needed</div></div>
+        <div class="person-chip"><div class="pc-name">Daniel Homolka</div><div class="pc-role">IT Management</div></div>
+        <div class="person-chip"><div class="pc-name">Adam Lynch</div><div class="pc-role">NV Security</div></div>
+        <div class="person-chip"><div class="pc-name">Andy Fletcher</div><div class="pc-role">NV Facilities</div></div>
+        <div class="person-chip"><div class="pc-name">RSOC-Israel@nvidia.com</div><div class="pc-role">NVIDIA Security RSOC – Email</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVAC FLOW -->
+  <div class="section-title"><span class="st-icon">▶</span> Evacuation Procedure – Step by Step</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body">
+      <div class="evac-flow">
+        <div class="evac-step es1">
+          <div class="e-num">1</div>
+          <div><div class="e-title">Alarm Activation</div>
+          <div class="e-sub">Fire alarm trigger, or instruction from the Office Manager (no dedicated panic button confirmed — see gaps below)</div></div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es2">
+          <div class="e-num">2</div>
+          <div><div class="e-title">Office Manager notifies RSOC &amp; building management</div>
+          <div class="e-sub">RSOC: +972 74-723-6000 | Emily Garfen: +33 6 86 31 78 71 | DALKIA (24/7): +33 6 22 17 16 91</div></div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es3">
+          <div class="e-num">3</div>
+          <div><div class="e-title">Floor sweep &amp; evacuation</div>
+          <div class="e-sub">Single floor (6th) — Emily Garfen sweeps and confirms all rooms clear, last to leave. Use stairs, not the lift.</div></div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es4">
+          <div class="e-num">4</div>
+          <div><div class="e-title">Assemble at Assembly Point</div>
+          <div class="e-sub">Outside the building, in front of the Engie tower</div></div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es5">
+          <div class="e-num">5</div>
+          <div><div class="e-title">Headcount</div>
+          <div class="e-sub">Managers report to Emily Garfen (IC Backup) → report missing persons immediately to IC and RSOC</div></div>
+        </div>
+        <div class="evac-arrow">↓</div>
+        <div class="evac-step es6">
+          <div class="e-num">6</div>
+          <div><div class="e-title">Return to Building – Only After Clearance</div>
+          <div class="e-sub">Clearance from local emergency services and the Incident Commander only → controlled re-entry</div></div>
+        </div>
+      </div>
+      <div class="dis-note">
+        <strong>Last documented drill:</strong> 13-Jun-2024 (IC: Emily Garfen, 6th floor). Over two years since — annual refresh is overdue.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO CARDS -->
+  <div class="section-title"><span class="st-icon">⚡</span> Incident Types – Tap for Details</div>
+  <div class="scenarios">
+    <div class="scenario-card" onclick="showScenario('fire',this)">
+      <div class="s-icon">🔥</div>
+      <div class="s-title">Fire / Smoke</div>
+      <div class="s-sub">Alarm + Evacuate</div>
+      <div class="s-tag tag-red">Evacuate</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('medical',this)">
+      <div class="s-icon">🚑</div>
+      <div class="s-title">Medical Emergency</div>
+      <div class="s-sub">15 (SAMU)</div>
+      <div class="s-tag tag-purple">Medical</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('security',this)">
+      <div class="s-icon">🔫</div>
+      <div class="s-title">Security Incident</div>
+      <div class="s-sub">Run-Hide-Fight</div>
+      <div class="s-tag tag-red">Lockdown</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('bomb',this)">
+      <div class="s-icon">🎒</div>
+      <div class="s-title">Bomb Threat / Package</div>
+      <div class="s-sub">Flagged local risk</div>
+      <div class="s-tag tag-orange">Isolate</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('utility',this)">
+      <div class="s-icon">⚡</div>
+      <div class="s-title">Utility Disruption</div>
+      <div class="s-sub">Power / Internet</div>
+      <div class="s-tag tag-green">Operations</div>
+    </div>
+    <div class="scenario-card" onclick="showScenario('elevator',this)">
+      <div class="s-icon">🛗</div>
+      <div class="s-title">Elevator Emergency</div>
+      <div class="s-sub">Entrapment</div>
+      <div class="s-tag tag-blue">Facilities</div>
+    </div>
+    <div class="scenario-card" style="flex-basis:100%;min-width:100%" onclick="showScenario('assembly-map',this)">
+      <div class="s-icon">🗺️</div>
+      <div class="s-title">Assembly Area Map</div>
+      <div class="s-sub">Tap to view map (illustrative)</div>
+      <div class="s-tag tag-teal">Map</div>
+    </div>
+  </div>
+
+  <!-- FIRE -->
+  <div id="fire" class="scenario-detail" style="border-top-color:var(--alert)">
+    <h3>🔥 Fire / Smoke</h3>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div>Activate the nearest fire alarm. Do not fight the fire unless trained and it is small and safe to do so.</div></li>
+      <li><div class="sn sn-red">2</div><div>Call Fire Brigade: <strong>18</strong> (or <strong>112</strong>)</div></li>
+      <li><div class="sn sn-red">3</div><div>Notify RSOC: <strong>+972 74-723-6000</strong> | Emily Garfen: <strong>+33 6 86 31 78 71</strong> | Serge Palaric: <strong>+33 6 73 28 39 52</strong></div></li>
+      <li><div class="sn sn-red">4</div><div>Evacuate via the nearest safe exit – <strong>no elevator</strong> | Emily Garfen sweeps the floor, last to leave</div></li>
+      <li><div class="sn sn-red">5</div><div>Assemble in front of the Engie tower | Headcount | Report missing persons</div></li>
+      <li><div class="sn sn-red">6</div><div>Do not re-enter until explicit clearance from the Fire Brigade</div></li>
+    </ul>
+    <div class="note-box">
+      <strong>Fire extinguishers:</strong> confirmed present and regularly checked by SICLI, audited by EDDERIS (2023 EHS review). ⚠️ Exact positions on the 6th floor not on file — please confirm with DALKIA / landlord.
+    </div>
+  </div>
+
+  <!-- MEDICAL -->
+  <div id="medical" class="scenario-detail" style="border-top-color:#6B21A8">
+    <h3>🚑 Medical Emergency</h3>
+    <ul class="steps">
+      <li><div class="sn sn-purple">1</div><div>Call SAMU: <strong>15</strong> | European Emergency: <strong>112</strong> — provide location: Le Colisée, Bâtiment B, 6th floor, 10 avenue de l'Arche, Courbevoie</div></li>
+      <li><div class="sn sn-purple">2</div><div>Notify Emily Garfen: <strong>+33 6 86 31 78 71</strong> | Serge Palaric: <strong>+33 6 73 28 39 52</strong></div></li>
+      <li><div class="sn sn-purple">3</div><div>Retrieve the First Aid Kit (present on site per 2023 EHS review) — exact spot to be confirmed</div></li>
+      <li><div class="sn sn-purple">4</div><div>Secure the area – keep bystanders away</div></li>
+      <li><div class="sn sn-purple">5</div><div>Do not move the casualty without training</div></li>
+      <li><div class="sn sn-purple">6</div><div>Post someone at the building entrance to direct the ambulance crew to the 6th floor</div></li>
+    </ul>
+    <div class="aed-box">
+      <div class="aed-icon">❤️‍🩹</div>
+      <div>
+        <div class="aed-title">First Aid Kit &amp; SST-trained first aiders</div>
+        <div class="aed-loc">Kit present on site (2023 EHS review); a 6-person SST (first-aid trained) evacuation committee was formed in 2022. ⚠️ Only Emily Garfen is currently named in drill records — full roster and contact numbers to be confirmed by site.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div id="security" class="scenario-detail" style="border-top-color:#8B0000">
+    <h3>🔫 Security Incident / Workplace Violence – Run · Hide · Fight</h3>
+    <div style="padding:8px 12px;background:#fdf3f3;border:1px solid #e0b0b0;border-left:3px solid #8B0000;border-radius:6px;font-size:12px;margin-bottom:10px">
+      📞 Office has <strong>no landline</strong> — all internal calls route via the Office Manager's mobile: <strong>+33 6 86 31 78 71</strong>
+    </div>
+    <ul class="steps">
+      <li><div class="sn sn-red">1</div><div><strong style="color:var(--alert)">RUN</strong> – Evacuate the area immediately, leave belongings behind</div></li>
+      <li><div class="sn sn-red">2</div><div><strong style="color:var(--warn)">HIDE</strong> – If you cannot run: lock/barricade the door, turn off lights, stay low and silent</div></li>
+      <li><div class="sn sn-red">3</div><div><strong style="color:#8B0000">FIGHT</strong> – Only as a last resort, use any available means</div></li>
+      <li><div class="sn sn-red">4</div><div>Call Police: <strong>17</strong> (or <strong>112</strong>) | Notify RSOC: <strong>+972 74-723-6000</strong> | Contact ISIS Sécurité (24/7): <strong>+33 1 43 33 67 55</strong></div></li>
+      <li><div class="sn sn-red">5</div><div>Do not attempt solo rescue – wait for security forces, do not open doors until Police confirm the building is clear</div></li>
+    </ul>
+    <div class="note-box">⚠️ No panic button confirmed on site — please confirm whether one exists or should be installed.</div>
+  </div>
+
+  <!-- BOMB THREAT -->
+  <div id="bomb" class="scenario-detail" style="border-top-color:var(--warn)">
+    <h3>🎒 Bomb Threat / Suspicious Package</h3>
+    <div class="note-box" style="margin-top:0;margin-bottom:10px">Flagged as a relevant local risk for this site, per the site risk assessment.</div>
+    <ul class="steps">
+      <li><div class="sn sn-orange">1</div><div><strong>Suspicious package:</strong> indicators include protruding wires, grease stains, or rigid/bulky envelopes. Do NOT touch, move, or open it.</div></li>
+      <li><div class="sn sn-orange">2</div><div><strong>Phone threat:</strong> do not hang up. Note the exact wording and any background noise if it is safe to do so.</div></li>
+      <li><div class="sn sn-orange">3</div><div>Isolate the area and calmly evacuate via the nearest exit — do not use mobile phones or radios near a suspicious item</div></li>
+      <li><div class="sn sn-orange">4</div><div>Assemble in front of the Engie tower</div></li>
+      <li><div class="sn sn-orange">5</div><div>Call Police: <strong>17</strong> (or <strong>112</strong>) | Notify Emily Garfen: <strong>+33 6 86 31 78 71</strong> | RSOC: <strong>+972 74-723-6000</strong></div></li>
+      <li><div class="sn sn-orange">6</div><div>Do not re-enter until Police confirm the building is clear</div></li>
+    </ul>
+  </div>
+
+  <!-- UTILITY -->
+  <div id="utility" class="scenario-detail" style="border-top-color:var(--nvg)">
+    <h3>⚡ Utility Disruption / Facility Shut-Down</h3>
+    <ul class="steps">
+      <li><div class="sn sn-green">1</div><div>Notify Emily Garfen: <strong>+33 6 86 31 78 71</strong> | Serge Palaric: <strong>+33 6 73 28 39 52</strong></div></li>
+      <li><div class="sn sn-green">2</div><div><strong>Power / HVAC / facility issue:</strong> DALKIA (24/7) — Musa Sahin: <strong>+33 6 22 17 16 91</strong> (preferred) or <strong>+33 810 804 805</strong> (ref D005JFT)</div></li>
+      <li><div class="sn sn-green">3</div><div><strong>Internet / IT outage:</strong> IT Manager Daniel Homolka: <strong>+49 172 7179961</strong></div></li>
+      <li><div class="sn sn-green">4</div><div><strong>Building / property issue:</strong> B&amp;C — Olivia Libercier: <strong>+33 1 45 00 02 02</strong></div></li>
+      <li><div class="sn sn-green">5</div><div>Notify NV Facilities Andy Fletcher: <strong>+44 7584 558398</strong></div></li>
+      <li><div class="sn sn-green">6</div><div>Notify RSOC: <strong>+972 74-723-6000</strong> if the disruption is extended or affects business continuity</div></li>
+    </ul>
+  </div>
+
+  <!-- ELEVATOR -->
+  <div id="elevator" class="scenario-detail" style="border-top-color:var(--info)">
+    <h3>🛗 Elevator Emergency / Entrapment</h3>
+    <ul class="steps">
+      <li><div class="sn sn-blue">1</div><div>Press the <strong>alarm button</strong> inside the elevator — this alerts building management directly</div></li>
+      <li><div class="sn sn-blue">2</div><div>Call DALKIA (24/7): <strong>+33 6 22 17 16 91</strong> or <strong>+33 810 804 805</strong></div></li>
+      <li><div class="sn sn-blue">3</div><div>Notify Emily Garfen: <strong>+33 6 86 31 78 71</strong> or Serge Palaric: <strong>+33 6 73 28 39 52</strong></div></li>
+      <li><div class="sn sn-blue">4</div><div>Stay calm — do NOT attempt to force open the doors. Remain in the elevator until rescue is confirmed.</div></li>
+      <li><div class="sn sn-blue">5</div><div>If medical assistance is needed after rescue, call SAMU: <strong>15</strong></div></li>
+    </ul>
+    <div class="note-box">⚠️ During a fire alarm: do NOT use the elevator — use the stairs only.</div>
+  </div>
+
+  <!-- ASSEMBLY MAP -->
+  <div id="assembly-map" class="scenario-detail" style="border-top-color:#0d6b3a">
+    <h3>🗺️ Assembly Area Map – Le Colisée, Bâtiment B, Courbevoie</h3>
+    <div class="map-wrap">
+      <svg viewBox="0 0 420 290" xmlns="http://www.w3.org/2000/svg">
+        <rect width="420" height="290" fill="#EFF4EE"/>
+        <rect x="0" y="30" width="420" height="40" fill="#D0D0CE"/>
+        <line x1="0" y1="50" x2="420" y2="50" stroke="white" stroke-width="1.5" stroke-dasharray="18,9"/>
+        <text x="210" y="21" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#555">Avenue de l'Arche</text>
+        <rect x="70" y="80" width="150" height="110" rx="4" fill="#2E5FA0"/>
+        <text x="145" y="126" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="white">Le Colisée</text>
+        <text x="145" y="142" text-anchor="middle" font-family="Arial" font-size="9" fill="#C0D0F0">Bâtiment B</text>
+        <text x="145" y="157" text-anchor="middle" font-family="Arial" font-size="9" fill="#90B0E0">NVIDIA – 6th Floor</text>
+        <rect x="250" y="90" width="110" height="90" rx="4" fill="#8B6914" opacity="0.85"/>
+        <text x="305" y="128" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="white">Engie</text>
+        <text x="305" y="143" text-anchor="middle" font-family="Arial" font-size="9" fill="#F0E0B0">Tower</text>
+        <defs>
+          <marker id="arrpar" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#76B900"/>
+          </marker>
+        </defs>
+        <line x1="220" y1="150" x2="248" y2="150" stroke="#76B900" stroke-width="2.5" marker-end="url(#arrpar)"/>
+        <circle cx="235" cy="205" r="20" fill="#76B900" stroke="white" stroke-width="2.5"/>
+        <text x="235" y="201" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="white">ASSEMBLY</text>
+        <text x="235" y="212" text-anchor="middle" font-family="Arial" font-size="7" font-weight="900" fill="white">POINT</text>
+        <line x1="220" y1="190" x2="235" y2="186" stroke="#76B900" stroke-width="2" stroke-dasharray="6,3"/>
+        <g transform="translate(388,30)">
+          <circle cx="0" cy="0" r="16" fill="white" stroke="#ccc" stroke-width="1"/>
+          <polygon points="0,-11 -4,3 0,1 4,3" fill="#555"/>
+          <text x="0" y="12" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#555">N</text>
+        </g>
+        <text x="210" y="260" text-anchor="middle" font-family="Arial" font-size="9" fill="#777">Illustrative — not to scale</text>
+      </svg>
+    </div>
+    <div class="map-note">
+      <strong>📍 Location:</strong> Outside Le Colisée, Bâtiment B — in front of the Engie tower, 10 avenue de l'Arche, 92400 Courbevoie<br>
+      <strong>⚠️ Note:</strong> This map is illustrative only — please confirm the exact assembly point and signage with the site.
+    </div>
+    <a href="https://www.google.com/maps/search/?api=1&query=10+avenue+de+l%27Arche+Courbevoie+France" target="_blank" class="map-btn">
+      📍 Open in Google Maps
+    </a>
+  </div>
+
+  <!-- ROLES -->
+  <div class="section-title"><span class="st-icon">▶</span> Emergency Roles</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-body-flush">
+      <table class="roles-table">
+        <thead>
+          <tr><th style="width:26%">Role</th><th style="width:28%">Person(s)</th><th>Main Responsibility</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rn">Site Leader / Incident Commander ⚠️</td>
+            <td>Serge Palaric (on file since 2016)<br><span style="font-family:monospace;color:var(--alert)">+33 6 73 28 39 52</span><br><span style="font-size:11px;color:var(--mid)">splaric@nvidia.com</span><br><span style="font-size:11px;color:var(--warn);font-weight:700">⚠️ Name unconfirmed — possibly outdated, check with Emily</span></td>
+            <td>Overall command during emergencies. Main contact between site and NVIDIA corporate. Declares evacuation and All Clear.</td>
+          </tr>
+          <tr>
+            <td class="rn">Office Manager / Safety Officer / IC Backup</td>
+            <td>Emily Garfen<br><span style="font-family:monospace;color:var(--alert)">+33 6 86 31 78 71</span><br><span style="font-size:11px;color:var(--mid)">egarfen@nvidia.com</span></td>
+            <td>Acts as IC if Site Leader is absent. First line of defence in the absence of a staffed front desk — controls visitor access, leads floor sweep, headcount and RSOC communication, maintains this SOP.</td>
+          </tr>
+          <tr>
+            <td class="rn">Evacuation Committee (SST first aiders) ⚠️</td>
+            <td>6-person committee formed 2022<br><span style="font-size:11px;color:var(--mid)">Only Emily Garfen named in 2022 &amp; 2024 drill records</span></td>
+            <td>SST-trained (first aid + evacuation) volunteers who support floor sweep, headcount and first aid. Full current roster and contact numbers not on file — request from Emily.</td>
+          </tr>
+          <tr>
+            <td class="rn">IT Manager</td>
+            <td>Daniel Homolka<br><span style="font-family:monospace;color:var(--alert)">+49 172 7179961</span></td>
+            <td>IT systems and network continuity during disruptions.</td>
+          </tr>
+          <tr>
+            <td class="rn">NV Security</td>
+            <td>Adam Lynch<br><span style="font-family:monospace;color:var(--alert)">+1 408 916 8158</span></td>
+            <td>Security escalation point and RSOC liaison.</td>
+          </tr>
+          <tr>
+            <td class="rn">NV Facilities</td>
+            <td>Andy Fletcher<br><span style="font-family:monospace;color:var(--alert)">+44 7584 558398</span></td>
+            <td>Facilities coordination and vendor liaison.</td>
+          </tr>
+          <tr>
+            <td class="rn">Facilities — DALKIA</td>
+            <td>Musa Sahin<br><span style="font-family:monospace;color:var(--alert)">+33 6 22 17 16 91</span></td>
+            <td>24/7 facility maintenance and emergency callout.</td>
+          </tr>
+          <tr>
+            <td class="rn">RSOC Israel</td>
+            <td>NVIDIA Security 24/7<br><span style="font-family:monospace;color:var(--alert)">+972 74-723-6000</span></td>
+            <td>24/7 monitoring, receives all reports, coordinates with local emergency services.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="section-title"><span class="st-icon">▶</span> Emergency Equipment</div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header hd-green">🩹 &nbsp;First Aid Kit</div>
+      <div class="card-body" style="font-size:13px;color:var(--mid)">
+        Confirmed present (2023 EHS review)<br>
+        ⚠️ Exact spot on 6th floor TBC<br>
+        <span style="color:var(--grey);font-size:11px">6-person SST committee (2022) — only Emily currently named</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header hd-alert">🧯 &nbsp;Fire Extinguishers</div>
+      <div class="card-body" style="font-size:13px;color:var(--mid)">
+        Confirmed present, regularly checked (SICLI / EDDERIS)<br>
+        ⚠️ Exact positions TBC<br>
+        <span style="color:var(--grey);font-size:11px">Confirm with DALKIA / landlord</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header hd-dark">🔌 &nbsp;Panic Button / Alarm</div>
+      <div class="card-body" style="font-size:13px;color:var(--mid)">
+        ⚠️ Not confirmed on site<br>
+        <span style="color:var(--grey);font-size:11px">Munich has one at reception — confirm for Paris</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- KNOWN GAPS -->
+  <div class="section-title"><span class="st-icon">▶</span> Known Gaps — Pending Confirmation by Site</div>
+  <div class="card hd-alert" style="margin-bottom:14px;border-color:#FFCCCC">
+    <div class="card-body">
+      <ul class="gaps-list">
+        <li><strong>Site Leader identity:</strong> Serge Palaric is on file since 2016 — may be outdated. Please confirm the current Site Leader's name and contact details.</li>
+        <li><strong>Evacuation Committee (SST) roster:</strong> a 6-person, first-aid-trained committee was formed in 2022 (per the site risk assessment), but only Emily Garfen is named in the 2022 and 2024 drill records. Please get the full current roster and mobile numbers.</li>
+        <li><strong>Panic button:</strong> not confirmed on site — please confirm whether one exists, or whether one should be installed.</li>
+        <li><strong>Shelter-in-place area:</strong> no location currently designated in site records — needs to be identified and documented.</li>
+        <li><strong>First Aid Kit &amp; nearest hospital:</strong> kit confirmed present (2023 EHS review), but exact location and nearest hospital are not on file.</li>
+        <li><strong>Fire extinguishers:</strong> confirmed present and regularly checked, but exact positions on the 6th floor are not on file.</li>
+        <li><strong>Elevator emergency call button:</strong> reported not working as of the January-2023 EHS review (landlord unresponsive at the time) — please confirm current status.</li>
+        <li><strong>Onsite ERT / emergency supply cabinet:</strong> not established beyond the SST committee above (not mandatory under 100 headcount, but worth considering given the single-floor, open-plan layout).</li>
+        <li><strong>Evacuation drill:</strong> last documented 13-Jun-2024 — annual refresh is overdue; please schedule the next one.</li>
+        <li><strong>Assembly point &amp; map:</strong> please confirm "in front of the Engie tower" is still current, clearly signed, and that the illustrative map above is accurate.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    NVIDIA France SAS &nbsp;·&nbsp; Le Colisée, Bâtiment B, 10 avenue de l'Arche, 92400 Courbevoie &nbsp;·&nbsp; SOP-FR-PAR-001 &nbsp;·&nbsp; DRAFT — August 2026<br>
+    Built from the site ERP, risk assessment &amp; 2024 drill records &nbsp;·&nbsp; Prepared by Ido Barak, pending review by Emily Garfen<br>
+    Internal document – for operational use by Safety Officers &amp; ERT only
+  </div>
+
+</div>
+
+<script>
+var activeId = null;
+function showScenario(id, cardEl) {
+  document.querySelectorAll('.scenario-detail').forEach(function(d){ d.classList.remove('active'); });
+  document.querySelectorAll('.scenario-card').forEach(function(c){ c.classList.remove('active'); });
+  if (activeId === id) { activeId = null; return; }
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    cardEl.classList.add('active');
+    activeId = id;
+    setTimeout(function(){ el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+  }
+}
+</script>
+</body>
+</html>
